@@ -4,8 +4,6 @@ interface IUser {
   username: string;
   email: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 const UserSchema = new mongoose.Schema<IUser>(
@@ -28,4 +26,5 @@ const UserSchema = new mongoose.Schema<IUser>(
   { timestamps: true }
 );
 
-export default mongoose.model<IUser>("User", UserSchema);
+const User = mongoose.model<IUser>("User", UserSchema);
+export default User;
