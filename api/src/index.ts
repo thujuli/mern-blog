@@ -8,6 +8,7 @@ mongoose
   .catch((err) => console.log(err));
 
 const app = express();
-const PORT = 3000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(process.env.PORT, () =>
+  console.log(`Server started on port ${process.env.PORT}`)
+);
