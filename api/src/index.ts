@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
 import authRoute from "./routes/auth.route";
-import errorMiddleware from "./middlewares/error.middelware";
+import errorMiddleware from "./middlewares/error.middleware";
 
 mongoose
   .connect(process.env.MONGO_URI)

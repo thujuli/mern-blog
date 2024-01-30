@@ -6,7 +6,7 @@ import HomePage from "./pages/HomePage.tsx";
 import AboutPage from "./pages/AboutPage.tsx";
 import DashboardPage from "./pages/DashboardPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
-import RegisterPage from "./pages/RegisterPage.tsx";
+import RegistrationPage from "./pages/RegistrationPage.tsx";
 import ProjectsPage from "./pages/ProjectsPage.tsx";
 
 const router = createBrowserRouter([
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
   { path: "/about", element: <AboutPage /> },
   { path: "/dashboard", element: <DashboardPage /> },
   { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> },
+  { path: "/register", element: <RegistrationPage /> },
   { path: "/projects", element: <ProjectsPage /> },
 ]);
 

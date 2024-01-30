@@ -1,13 +1,13 @@
-import Navbar from "../organisms/Navbar";
+import Header from "../components/Header";
 
 type MainTemplateProps = {
   children: React.ReactNode;
 };
 export default function MainTemplate({ children }: MainTemplateProps) {
   return (
-    <>
-      <Navbar />
+    <div className="min-h-screen">
+      <Header />
       {children}
-    </>
+    </div>
   );
 }

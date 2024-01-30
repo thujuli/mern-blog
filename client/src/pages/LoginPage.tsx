@@ -1,4 +1,4 @@
-import MainTemplate from "../components/templates/MainTemplate";
+import MainTemplate from "../layouts/MainTemplate";
 
 export default function LoginPage() {
   return (
