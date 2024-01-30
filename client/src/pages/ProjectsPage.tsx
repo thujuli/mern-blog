@@ -1,9 +1,9 @@
-import MainTemplate from "../layouts/MainTemplate";
+import MainLayout from "../layouts/MainLayout";
 
 export default function ProjectsPage() {
   return (
-    <MainTemplate>
+    <MainLayout>
       <div>ProjectsPage</div>
-    </MainTemplate>
+    </MainLayout>
   );
 }

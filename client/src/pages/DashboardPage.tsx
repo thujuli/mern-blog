@@ -1,9 +1,9 @@
-import MainTemplate from "../layouts/MainTemplate";
+import MainLayout from "../layouts/MainLayout";
 
 export default function DashboardPage() {
   return (
-    <MainTemplate>
+    <MainLayout>
       <div>DashboardPage</div>
-    </MainTemplate>
+    </MainLayout>
   );
 }

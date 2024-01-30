@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import "dotenv/config";
 import authRoute from "./routes/auth.route";
 import errorMiddleware from "./middlewares/error.middleware";
@@ -11,6 +12,7 @@ mongoose
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.listen(process.env.PORT, () =>

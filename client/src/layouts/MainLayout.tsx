@@ -1,9 +1,9 @@
 import Header from "../components/Header";
 
-type MainTemplateProps = {
+type Props = {
   children: React.ReactNode;
 };
-export default function MainTemplate({ children }: MainTemplateProps) {
+export default function MainTemplate({ children }: Props) {
   return (
     <div className="min-h-screen">
       <Header />
