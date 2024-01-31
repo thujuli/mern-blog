@@ -1,3 +1,4 @@
+import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 type Props = {
@@ -9,6 +10,7 @@ const MainLayout: React.FC<Props> = ({ children }: Props) => {
     <div className="min-h-screen">
       <Navbar />
       {children}
+      <Footer />
     </div>
   );
 };
