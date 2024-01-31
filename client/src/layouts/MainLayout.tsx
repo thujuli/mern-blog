@@ -1,13 +1,16 @@
-import Header from "../components/Header";
+import Navbar from "../components/Navbar";
 
 type Props = {
   children: React.ReactNode;
 };
-export default function MainTemplate({ children }: Props) {
+
+const MainLayout: React.FC<Props> = ({ children }: Props) => {
   return (
     <div className="min-h-screen">
-      <Header />
+      <Navbar />
       {children}
     </div>
   );
-}
+};
+
+export default MainLayout;
