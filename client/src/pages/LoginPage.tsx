@@ -1,9 +1,12 @@
+import React from "react";
 import MainLayout from "../layouts/MainLayout";
 
-export default function LoginPage() {
+const LoginPage: React.FC = () => {
   return (
     <MainLayout>
       <div>LoginPage</div>
     </MainLayout>
   );
-}
+};
+
+export default LoginPage;

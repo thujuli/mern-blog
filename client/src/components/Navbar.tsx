@@ -1,9 +1,10 @@
+import React from "react";
 import { Button, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
 
-export default function Header() {
+const NavbarComponent: React.FC = () => {
   const path = useLocation().pathname;
   return (
     <Navbar className="border-b-2">
@@ -51,4 +52,6 @@ export default function Header() {
       </Navbar.Collapse>
     </Navbar>
   );
-}
+};
+
+export default NavbarComponent;

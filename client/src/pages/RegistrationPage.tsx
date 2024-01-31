@@ -1,6 +1,6 @@
+import React, { useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
-import React, { useState } from "react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -10,7 +10,7 @@ const initialFormData = {
   password: "",
 };
 
-export default function RegistrationPage() {
+const RegistrationPage: React.FC = function () {
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState<string | null>(null);
@@ -142,4 +142,6 @@ export default function RegistrationPage() {
       </div>
     </MainLayout>
   );
-}
+};
+
+export default RegistrationPage;

@@ -1,9 +1,12 @@
+import React from "react";
 import MainLayout from "../layouts/MainLayout";
 
-export default function HomePage() {
+const HomePage: React.FC = () => {
   return (
     <MainLayout>
       <div>HomePage</div>
     </MainLayout>
   );
-}
+};
+
+export default HomePage;

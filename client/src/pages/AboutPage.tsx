@@ -1,9 +1,12 @@
+import React from "react";
 import MainLayout from "../layouts/MainLayout";
 
-export default function AboutPage() {
+const AboutPage: React.FC = () => {
   return (
     <MainLayout>
       <div>AboutPage</div>
     </MainLayout>
   );
-}
+};
+
+export default AboutPage;
