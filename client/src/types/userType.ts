@@ -1,0 +1,16 @@
+interface IUserForm {
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface IUserResponse {
+  _id: string;
+  username: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export type { IUserForm, IUserResponse };
