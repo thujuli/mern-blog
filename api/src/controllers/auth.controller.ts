@@ -43,12 +43,12 @@ const loginCreate = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      next(errorHandler(400, "Invalid Credentials"));
+      throw errorHandler(400, "Invalid Credentials");
     }
 
     const isValidUser = bcryptjs.compareSync(password, user.password);
     if (!isValidUser) {
-      next(errorHandler(400, "Invalid Credentials"));
+      throw errorHandler(400, "Invalid Credentials");
     }
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
@@ -60,7 +60,9 @@ const loginCreate = async (req: Request, res: Response, next: NextFunction) => {
         httpOnly: true,
       })
       .json(rest);
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 export { registerCreate, loginCreate };
