@@ -65,7 +65,7 @@ const RegistrationPage: React.FC = function () {
               Blog
             </Link>
             <p className="text-sm mt-5">
-              This is a demo project. You can sign up with your email and
+              This is a demo project. You can registration with your email and
               password or with Google.
             </p>
           </div>
@@ -132,7 +132,7 @@ const RegistrationPage: React.FC = function () {
               </Button>
             </form>
             <div className="flex gap-2 text-sm mt-3">
-              <span>Have an account?</span>
+              <span>Already have an account?</span>
               <Link to="/login" className="text-blue-500">
                 Login
               </Link>
