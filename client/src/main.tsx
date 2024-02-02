@@ -11,6 +11,7 @@ import ProjectsPage from "./pages/ProjectsPage.tsx";
 import { store, persistor } from "./redux/store.ts";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import ThemeProvider from "./components/ThemeProvider.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -25,7 +26,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <RouterProvider router={router} />
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>
