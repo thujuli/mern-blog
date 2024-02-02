@@ -1,5 +1,6 @@
 import axios from "axios";
 import { IUserForm } from "../types/userType";
+import { IGoogleResponse } from "../types/oAuthType";
 
 const loginStore = async (data: IUserForm) => {
   const res = await axios.post(
@@ -17,4 +18,12 @@ const registrationStore = async (data: IUserForm) => {
   return res.data;
 };
 
-export { loginStore, registrationStore };
+const googleStore = async (data: IGoogleResponse) => {
+  const res = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/google`,
+    data
+  );
+  return res.data;
+};
+
+export { loginStore, registrationStore, googleStore };

@@ -1,10 +1,5 @@
 import mongoose from "mongoose";
-
-interface IUser {
-  username: string;
-  email: string;
-  password: string;
-}
+import { IUser } from "user.type";
 
 const UserSchema = new mongoose.Schema<IUser>(
   {
@@ -21,6 +16,11 @@ const UserSchema = new mongoose.Schema<IUser>(
     password: {
       type: String,
       required: true,
+    },
+    profilePicture: {
+      type: String,
+      default:
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
   },
   { timestamps: true }
