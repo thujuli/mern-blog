@@ -3,8 +3,14 @@ import MainLayout from "../layouts/MainLayout";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
+import { IUserForm } from "../types/userType";
+import { authDone, authFailure, authStart } from "../redux/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { registrationStore } from "../api/authApi";
+import axios, { AxiosError } from "axios";
 
-const initialFormData = {
+const initialFormData: IUserForm = {
   username: "",
   email: "",
   password: "",
@@ -12,9 +18,9 @@ const initialFormData = {
 
 const RegistrationPage: React.FC = function () {
   const [formData, setFormData] = useState(initialFormData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState<string | null>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isLoading, errMsg } = useSelector((state: RootState) => state.auth);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -23,29 +29,19 @@ const RegistrationPage: React.FC = function () {
     e.preventDefault();
 
     try {
-      setIsLoading(true);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      dispatch(authStart());
+      await registrationStore(formData);
+      dispatch(authDone());
+      navigate("/login");
+    } catch (err) {
+      const error = err as AxiosError | Error;
 
-      if (!res.ok) {
-        setErrMsg("Internal Server Error");
+      if (axios.isAxiosError(error)) {
+        authFailure(error.response?.data.message);
       } else {
-        navigate("/login");
+        authFailure(error.message ?? "An unknown error occured");
       }
-    } catch (error) {
-      setErrMsg(
-        error instanceof Error ? error.message : "An unknown error occured"
-      );
     } finally {
-      setIsLoading(false);
       setFormData(initialFormData);
     }
   };
@@ -120,7 +116,11 @@ const RegistrationPage: React.FC = function () {
                   required
                 />
               </div>
-              <Button gradientDuoTone="purpleToPink" type="submit">
+              <Button
+                gradientDuoTone="purpleToPink"
+                type="submit"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Spinner size="sm" />

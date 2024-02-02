@@ -5,13 +5,13 @@ import { HiInformationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  loginStart,
+  authStart,
+  authFailure,
   loginSuccess,
-  loginFailure,
-} from "../redux/slices/userSlice";
+} from "../redux/slices/authSlice";
 import { IUserForm, IUserResponse } from "../types/userType";
 import { RootState } from "../redux/store";
-import { loginCreate } from "../api/authApi";
+import { loginStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 
 const initialFormData: IUserForm = {
@@ -24,7 +24,7 @@ const LoginPage: React.FC = function () {
   const [formData, setFormData] = useState(initialFormData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { errMsg, isLoading } = useSelector((state: RootState) => state.user);
+  const { errMsg, isLoading } = useSelector((state: RootState) => state.auth);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -33,18 +33,18 @@ const LoginPage: React.FC = function () {
     e.preventDefault();
 
     try {
-      dispatch(loginStart());
+      dispatch(authStart());
 
-      const res: IUserResponse = await loginCreate(formData);
+      const res: IUserResponse = await loginStore(formData);
       dispatch(loginSuccess(res));
       navigate("/");
     } catch (err) {
       const error = err as Error | AxiosError;
 
       if (axios.isAxiosError(error)) {
-        dispatch(loginFailure(error.response?.data.message));
+        dispatch(authFailure(error.response?.data.message));
       } else {
-        dispatch(loginFailure(error.message ?? "An unknown error occured"));
+        dispatch(authFailure(error.message ?? "An unknown error occured"));
       }
     } finally {
       setFormData(initialFormData);
@@ -104,7 +104,11 @@ const LoginPage: React.FC = function () {
                   required
                 />
               </div>
-              <Button gradientDuoTone="purpleToPink" type="submit">
+              <Button
+                gradientDuoTone="purpleToPink"
+                type="submit"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Spinner size="sm" />

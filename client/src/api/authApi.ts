@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { IUserForm } from "../types/userType";
 
-const loginCreate = async (data: IUserForm) => {
+const loginStore = async (data: IUserForm) => {
   const res = await axios.post(
     `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
     data
@@ -9,4 +9,12 @@ const loginCreate = async (data: IUserForm) => {
   return res.data;
 };
 
-export { loginCreate };
+const registrationStore = async (data: IUserForm) => {
+  const res = await axios.post(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
+    data
+  );
+  return res.data;
+};
+
+export { loginStore, registrationStore };
