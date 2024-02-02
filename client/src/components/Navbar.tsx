@@ -1,11 +1,58 @@
 import React from "react";
-import { Button, Navbar, TextInput } from "flowbite-react";
+import { Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { IUserResponse } from "../types/userType";
+
+interface PropsUserDropdown {
+  currentUser: IUserResponse;
+}
+
+const LoginBtn: React.FC = () => {
+  return (
+    <Link to="/login">
+      <Button gradientDuoTone="purpleToBlue" outline>
+        Login
+      </Button>
+    </Link>
+  );
+};
+
+const UserDropdown: React.FC<PropsUserDropdown> = ({
+  currentUser,
+}: PropsUserDropdown) => {
+  return (
+    <Dropdown
+      label={
+        <img
+          src={currentUser.profilePicture}
+          alt=""
+          className="h-10 w-10 rounded-full"
+        />
+      }
+      arrowIcon={false}
+      inline
+    >
+      <Dropdown.Header>
+        <span className="block text-sm">@{currentUser.username}</span>
+        <span className="block truncate text-sm font-medium">
+          {currentUser.email}
+        </span>
+      </Dropdown.Header>
+      <Dropdown.Item>Dashboard</Dropdown.Item>
+      <Dropdown.Divider />
+      <Dropdown.Item>Logout</Dropdown.Item>
+    </Dropdown>
+  );
+};
 
 const NavbarComponent: React.FC = () => {
   const path = useLocation().pathname;
+  const { currentUser } = useSelector((state: RootState) => state.auth);
+
   return (
     <Navbar className="border-b-2">
       <Link
@@ -32,11 +79,12 @@ const NavbarComponent: React.FC = () => {
         <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
           <FaMoon />
         </Button>
-        <Link to="/login">
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Login
-          </Button>
-        </Link>
+
+        {currentUser ? (
+          <UserDropdown currentUser={currentUser} />
+        ) : (
+          <LoginBtn />
+        )}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
