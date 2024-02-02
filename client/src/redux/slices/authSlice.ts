@@ -14,10 +14,10 @@ const initialState: IInitialState = {
 };
 
 const userSlice = createSlice({
-  name: "user",
+  name: "auth",
   initialState,
   reducers: {
-    loginStart: (state) => {
+    authStart: (state) => {
       state.isLoading = true;
       state.errMsg = null;
     },
@@ -26,12 +26,17 @@ const userSlice = createSlice({
       state.errMsg = null;
       state.currentUser = action.payload;
     },
-    loginFailure: (state, action: PayloadAction<string>) => {
+    authDone: (state) => {
+      state.isLoading = false;
+      state.errMsg = null;
+    },
+    authFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
       state.errMsg = action.payload;
     },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure } = userSlice.actions;
+export const { authStart, authFailure, authDone, loginSuccess } =
+  userSlice.actions;
 export default userSlice.reducer;
