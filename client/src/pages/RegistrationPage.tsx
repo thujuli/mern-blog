@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { registrationStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
+import OAuth from "../components/OAuth";
 
 const initialFormData: IUserForm = {
   username: "",
@@ -131,6 +132,9 @@ const RegistrationPage: React.FC = function () {
                 )}
               </Button>
             </form>
+            <div className="mt-2">
+              <OAuth />
+            </div>
             <div className="flex gap-2 text-sm mt-3">
               <span>Already have an account?</span>
               <Link to="/login" className="text-blue-500">

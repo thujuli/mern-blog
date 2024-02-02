@@ -1,9 +1,14 @@
 import express from "express";
-import { registerCreate, loginCreate } from "../controllers/auth.controller";
+import {
+  registrationStore,
+  loginStore,
+  googleStore,
+} from "../controllers/auth.controller";
 
 const router = express.Router();
 
-router.post("/register", registerCreate);
-router.post("/login", loginCreate);
+router.post("/register", registrationStore);
+router.post("/login", loginStore);
+router.post("/google", googleStore);
 
 export default router;

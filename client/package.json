@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^2.1.0",
     "autoprefixer": "^10.4.17",
     "axios": "^1.6.7",
+    "firebase": "^10.8.0",
     "flowbite-react": "^0.7.2",
     "postcss": "^8.4.33",
     "react": "^18.2.0",

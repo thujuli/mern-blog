@@ -13,6 +13,7 @@ import { IUserForm, IUserResponse } from "../types/userType";
 import { RootState } from "../redux/store";
 import { loginStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
+import OAuth from "../components/OAuth";
 
 const initialFormData: IUserForm = {
   username: "",
@@ -119,6 +120,9 @@ const LoginPage: React.FC = function () {
                 )}
               </Button>
             </form>
+            <div className="mt-2">
+              <OAuth />
+            </div>
             <div className="flex gap-2 text-sm mt-3">
               <span>Don't have an account?</span>
               <Link to="/register" className="text-blue-500">

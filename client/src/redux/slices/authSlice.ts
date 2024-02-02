@@ -22,9 +22,9 @@ const userSlice = createSlice({
       state.errMsg = null;
     },
     loginSuccess: (state, action: PayloadAction<IUserResponse>) => {
+      state.currentUser = action.payload;
       state.isLoading = false;
       state.errMsg = null;
-      state.currentUser = action.payload;
     },
     authDone: (state) => {
       state.isLoading = false;
