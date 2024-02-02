@@ -6,7 +6,7 @@ import app from "../utils/firebase";
 import { googleStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { authDone, authStart, loginSuccess } from "../redux/slices/authSlice";
+import { authStart, loginSuccess } from "../redux/slices/authSlice";
 import { RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
 
