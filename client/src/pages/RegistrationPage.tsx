@@ -37,9 +37,9 @@ const RegistrationPage: React.FC = function () {
       const error = err as AxiosError | Error;
 
       if (axios.isAxiosError(error)) {
-        authFailure(error.response?.data.message);
+        dispatch(authFailure(error.response?.data.message));
       } else {
-        authFailure(error.message ?? "An unknown error occured");
+        dispatch(authFailure(error.message ?? "An unknown error occured"));
       }
     } finally {
       setFormData(initialFormData);

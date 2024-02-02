@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { IUserForm } from "../types/userType";
 
 const loginStore = async (data: IUserForm) => {
