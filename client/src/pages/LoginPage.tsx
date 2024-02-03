@@ -14,6 +14,7 @@ import { RootState } from "../redux/store";
 import { loginStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
+import { IErrMsg, IIsLoading } from "../types/authType";
 
 const initialFormData: IUserForm = {
   username: "",
@@ -21,11 +22,18 @@ const initialFormData: IUserForm = {
   password: "",
 };
 
+interface IUseSelector {
+  isLoading: IIsLoading;
+  errMsg: IErrMsg;
+}
+
 const LoginPage: React.FC = function () {
   const [formData, setFormData] = useState(initialFormData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { errMsg, isLoading } = useSelector((state: RootState) => state.auth);
+  const { errMsg, isLoading }: IUseSelector = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });

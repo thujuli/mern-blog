@@ -4,6 +4,7 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import { IUserForm } from "../types/userType";
+import { IIsLoading, IErrMsg } from "../types/authType";
 import { authDone, authFailure, authStart } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -17,11 +18,18 @@ const initialFormData: IUserForm = {
   password: "",
 };
 
+interface IUseSelector {
+  isLoading: IIsLoading;
+  errMsg: IErrMsg;
+}
+
 const RegistrationPage: React.FC = function () {
   const [formData, setFormData] = useState(initialFormData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, errMsg } = useSelector((state: RootState) => state.auth);
+  const { isLoading, errMsg }: IUseSelector = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });

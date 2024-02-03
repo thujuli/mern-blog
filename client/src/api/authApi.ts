@@ -1,6 +1,6 @@
 import axios from "axios";
 import { IUserForm } from "../types/userType";
-import { IGoogleResponse } from "../types/oAuthType";
+import { IGoogleResponse } from "../types/authType";
 
 const loginStore = async (data: IUserForm) => {
   const res = await axios.post(

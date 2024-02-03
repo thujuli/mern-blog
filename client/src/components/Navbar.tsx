@@ -6,6 +6,8 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { IUserResponse } from "../types/userType";
+import { ICurrentUser } from "../types/authType";
+import { IMode } from "../types/themeType";
 import { themeToggle } from "../redux/slices/themeSlice";
 
 interface PropsUserDropdown {
@@ -54,9 +56,13 @@ const UserDropdown: React.FC<PropsUserDropdown> = ({
 
 const NavbarComponent: React.FC = () => {
   const path = useLocation().pathname;
-  const { currentUser } = useSelector((state: RootState) => state.auth);
+  const { currentUser }: { currentUser: ICurrentUser } = useSelector(
+    (state: RootState) => state.auth
+  );
   const dispatch = useDispatch();
-  const { mode } = useSelector((state: RootState) => state.theme);
+  const { mode }: { mode: IMode } = useSelector(
+    (state: RootState) => state.theme
+  );
 
   return (
     <Navbar className="border-b-2">

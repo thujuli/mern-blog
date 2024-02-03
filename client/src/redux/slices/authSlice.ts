@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUserResponse } from "../../types/userType";
+import { ICurrentUser, IErrMsg, IIsLoading } from "../../types/authType";
 
 interface IInitialState {
-  currentUser: IUserResponse | null;
-  errMsg: string | null;
-  isLoading: boolean;
+  currentUser: ICurrentUser;
+  errMsg: IErrMsg;
+  isLoading: IIsLoading;
 }
 
 const initialState: IInitialState = {
