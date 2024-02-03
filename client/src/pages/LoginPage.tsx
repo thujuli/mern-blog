@@ -61,7 +61,7 @@ const LoginPage: React.FC = function () {
   };
   return (
     <MainLayout>
-      <div className="p-3 mt-20 max-w-3xl mx-auto">
+      <div className="p-3 my-20 max-w-3xl mx-auto">
         <div className="flex flex-col md:flex-row gap-5">
           {/* left */}
           <div className="flex-1 md:mt-16">
