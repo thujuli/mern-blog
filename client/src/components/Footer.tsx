@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 const FooterComponent: React.FC = () => {
   return (
-    <div className="mt-20 border-2">
+    <div className="border-2 border-gray-600/20 dark:border-gray-600 rounded-xl">
       <Footer container>
         <div className="w-full container mx-auto ">
           <div className="grid w-full justify-between sm:flex sm:justify-between md:flex md:grid-cols-1">

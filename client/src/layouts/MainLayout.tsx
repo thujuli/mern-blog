@@ -7,10 +7,14 @@ type Props = {
 
 const MainLayout: React.FC<Props> = ({ children }: Props) => {
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      {children}
-      <Footer />
+    <div className="min-h-screen flex flex-col alig">
+      <div className="grow">
+        <Navbar />
+        {children}
+      </div>
+      <div className="grow-0">
+        <Footer />
+      </div>
     </div>
   );
 };
