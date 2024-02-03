@@ -16,7 +16,7 @@ const DashSidebar: React.FC = () => {
     }
   }, [location.search]);
   return (
-    <Sidebar className="w-full sm:w-64">
+    <Sidebar className="grow-0 w-full sm:w-64">
       <Sidebar.Items className="sm:min-h-screen">
         <Sidebar.ItemGroup>
           <Link to="/dashboard?tab=profile">

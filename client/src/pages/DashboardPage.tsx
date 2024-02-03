@@ -17,7 +17,7 @@ const DashboardPage: React.FC = () => {
   }, [location.search]);
   return (
     <MainLayout>
-      <div className="min-h-screen flex flex-col md:flex-row">
+      <div className="min-h-screen flex flex-col sm:flex-row">
         {/* sidebar */}
         <DashSidebar />
         {/* profile */}
