@@ -84,7 +84,11 @@ const LoginPage: React.FC = function () {
           <div className="flex-1">
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <div>
-                <Label value="Email" htmlFor="email" className="text-base" />
+                <Label
+                  value="Email"
+                  htmlFor="email"
+                  className="text-base ml-2"
+                />
                 <TextInput
                   type="email"
                   placeholder="example@mail.com"
@@ -100,7 +104,7 @@ const LoginPage: React.FC = function () {
                 <Label
                   value="Password"
                   htmlFor="password"
-                  className="text-base"
+                  className="text-base ml-2"
                 />
                 <TextInput
                   type="password"

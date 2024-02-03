@@ -82,7 +82,7 @@ const RegistrationPage: React.FC = function () {
                 <Label
                   value="Username"
                   htmlFor="username"
-                  className="text-base"
+                  className="text-base ml-2"
                 />
                 <TextInput
                   type="text"
@@ -96,7 +96,11 @@ const RegistrationPage: React.FC = function () {
                 />
               </div>
               <div>
-                <Label value="Email" htmlFor="email" className="text-base" />
+                <Label
+                  value="Email"
+                  htmlFor="email"
+                  className="text-base ml-2"
+                />
                 <TextInput
                   type="email"
                   placeholder="example@mail.com"
@@ -112,7 +116,7 @@ const RegistrationPage: React.FC = function () {
                 <Label
                   value="Password"
                   htmlFor="password"
-                  className="text-base"
+                  className="text-base ml-2"
                 />
                 <TextInput
                   type="password"
