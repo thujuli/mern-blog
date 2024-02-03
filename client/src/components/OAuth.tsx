@@ -9,11 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { authStart, loginSuccess } from "../redux/slices/authSlice";
 import { RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
+import { IIsLoading } from "../types/authType";
 
 const OAuth: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const { isLoading }: { isLoading: IIsLoading } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const handleClick: React.MouseEventHandler<HTMLButtonElement> = async () => {
     dispatch(authStart());
