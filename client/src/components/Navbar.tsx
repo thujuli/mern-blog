@@ -43,7 +43,9 @@ const UserDropdown: React.FC<PropsUserDropdown> = ({
           {currentUser.email}
         </span>
       </Dropdown.Header>
-      <Dropdown.Item>Dashboard</Dropdown.Item>
+      <Dropdown.Item>
+        <Link to={"/dashboard"}>Dashboard</Link>
+      </Dropdown.Item>
       <Dropdown.Divider />
       <Dropdown.Item>Logout</Dropdown.Item>
     </Dropdown>
