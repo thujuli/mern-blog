@@ -25,6 +25,7 @@ const DashSidebar: React.FC = () => {
               label="User"
               labelColor="dark"
               active={tab === "profile"}
+              as="span"
             >
               Profile
             </Sidebar.Item>
