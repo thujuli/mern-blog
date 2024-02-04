@@ -20,11 +20,28 @@ const registrationStore = async (
     email === "" ||
     password === ""
   ) {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
+  }
+
+  if (username.length < 5) {
+    return next(errorHandler(400, "Username must be at least 5 characters"));
+  }
+  if (password.length < 6) {
+    return next(errorHandler(400, "Password must be at least 6 characters"));
+  }
+  if (username.includes(" ")) {
+    return next(errorHandler(400, "Username cannot contain spaces"));
+  }
+  if (username !== username.toLocaleLowerCase()) {
+    return next(errorHandler(400, "Username must be lowercase"));
+  }
+  if (!username.match(/^[A-Za-z0-9]*$/)) {
+    return next(
+      errorHandler(400, "Username can only contain letters and numbers")
+    );
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
-
   const newUser = new User({ username, email, password: hashedPassword });
   try {
     await newUser.save();
@@ -38,7 +55,7 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password }: IAuthLogin = req.body;
 
   if (!email || !password || email === "" || password === "") {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
   }
 
   try {
