@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { ICurrentUser } from "../types/authType";
 import { Button, Label, TextInput } from "flowbite-react";
@@ -10,9 +10,24 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import app from "../utils/firebase";
+import { IUserForm, IUserResponse } from "../types/userType";
+import { userUpdate } from "../api/userApi";
+import {
+  userUpdateFailure,
+  userUpdateStart,
+  userUpdateSuccess,
+} from "../redux/slices/userSlice";
+import axios, { AxiosError } from "axios";
+
+const initialState: IUserForm = {
+  username: "",
+  email: "",
+  password: "",
+  profilePicture: "",
+};
 
 const DashProfile: React.FC = () => {
-  const { currentUser }: { currentUser: ICurrentUser } = useSelector(
+  const { currentUser, isLoading }: { currentUser: ICurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -24,6 +39,8 @@ const DashProfile: React.FC = () => {
     string | null
   >(null);
   const filePickerRef = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState(initialState);
+  const dispatch = useDispatch();
   // console.log(imageFileUploadProgress, imageFileUploadError);
 
   const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -58,6 +75,7 @@ const DashProfile: React.FC = () => {
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               setImageFileUrl(downloadURL);
+              // setFormData({ ...formData, profilePicture: downloadURL });
             });
           }
         );
@@ -65,10 +83,38 @@ const DashProfile: React.FC = () => {
       uploadImage();
     }
   }, [imageFile]);
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    if (Object.keys(formData).length === 0) {
+      return;
+    }
+
+    try {
+      dispatch(userUpdateStart());
+      const res: IUserResponse = await userUpdate(currentUser!._id, formData);
+      dispatch(userUpdateSuccess(res));
+    } catch (err) {
+      const error = err as AxiosError | Error;
+      if (axios.isAxiosError(error)) {
+        dispatch(userUpdateFailure(error.response?.data.message));
+      } else {
+        dispatch(userUpdateFailure(error.message));
+      }
+    }
+  };
+
   return (
     <div className="grow mx-auto p-4 w-full md:w-0 md:max-w-lg">
       <h1 className="mt-10 my-5 font-semibold text-3xl text-center">Profile</h1>
-      <form className="flex flex-col gap-4 justify-center">
+      <form
+        className="flex flex-col gap-4 justify-center"
+        onSubmit={handleSubmit}
+      >
         <div className="w-32 h-32 rounded-full border-4 shadow-xl mx-auto">
           <input
             type="file"
@@ -95,7 +141,9 @@ const DashProfile: React.FC = () => {
             placeholder="Jhon Doe"
             id="username"
             name="username"
-            // value={currentUser?.username}
+            defaultValue={currentUser?.username}
+            onChange={handleChange}
+            disabled={isLoading}
             required
           />
         </div>
@@ -106,7 +154,9 @@ const DashProfile: React.FC = () => {
             placeholder="example@mail.com"
             id="email"
             name="email"
-            // value={currentUser?.email}
+            defaultValue={currentUser?.email}
+            onChange={handleChange}
+            disabled={isLoading}
             required
           />
         </div>
@@ -121,10 +171,17 @@ const DashProfile: React.FC = () => {
             placeholder="********"
             id="password"
             name="password"
-            required
+            value={formData.password}
+            onChange={handleChange}
+            disabled={isLoading}
           />
         </div>
-        <Button gradientDuoTone="purpleToPink" type="submit" outline>
+        <Button
+          gradientDuoTone="purpleToPink"
+          type="submit"
+          outline
+          disabled={isLoading}
+        >
           Update
         </Button>
       </form>
