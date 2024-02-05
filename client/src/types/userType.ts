@@ -2,6 +2,7 @@ interface IUserForm {
   username: string;
   email: string;
   password: string;
+  profilePicture?: string;
 }
 
 interface IUserResponse {
