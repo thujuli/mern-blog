@@ -15,6 +15,7 @@ import { loginStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
 import { IErrMsg, IIsLoading } from "../types/authType";
+import { useCookies } from "react-cookie";
 
 const initialFormData: IUserForm = {
   username: "",
@@ -34,6 +35,7 @@ const LoginPage: React.FC = function () {
   const { errMsg, isLoading }: IUseSelector = useSelector(
     (state: RootState) => state.auth
   );
+  const [cookies, setCookie] = useCookies(["access_token"]);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -43,9 +45,11 @@ const LoginPage: React.FC = function () {
 
     try {
       dispatch(authStart());
-
       const res: IUserResponse = await loginStore(formData);
-      dispatch(loginSuccess(res));
+      const { access_token, ...rest } = res;
+
+      setCookie("access_token", access_token);
+      dispatch(loginSuccess(rest));
       navigate("/");
     } catch (err) {
       const error = err as Error | AxiosError;

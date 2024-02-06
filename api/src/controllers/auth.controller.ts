@@ -72,12 +72,7 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
     const { password: pass, ...rest } = user.toObject();
 
-    res
-      .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .json(rest);
+    res.json({ ...rest, access_token: token });
   } catch (error) {
     next(error);
   }
