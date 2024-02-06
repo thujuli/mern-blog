@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { ICurrentUser } from "../types/authType";
+import { ICurrentUser, IIsLoading } from "../types/authType";
 import { Button, Label, TextInput } from "flowbite-react";
 import {
   getDownloadURL,
@@ -18,6 +18,7 @@ import {
   userUpdateSuccess,
 } from "../redux/slices/userSlice";
 import axios, { AxiosError } from "axios";
+import { useCookies } from "react-cookie";
 
 const initialState: IUserForm = {
   username: "",
@@ -26,10 +27,17 @@ const initialState: IUserForm = {
   profilePicture: "",
 };
 
+interface selectorUpdateUser {
+  currentUser: ICurrentUser;
+  isLoading: IIsLoading;
+}
+
 const DashProfile: React.FC = () => {
-  const { currentUser, isLoading }: { currentUser: ICurrentUser } = useSelector(
+  const { currentUser }: { currentUser: ICurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
+  const { currentUser: currentUserUpdate, isLoading }: selectorUpdateUser =
+    useSelector((state: RootState) => state.user);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState<
@@ -41,6 +49,7 @@ const DashProfile: React.FC = () => {
   const filePickerRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
+  const [cookies] = useCookies(["access_token"]);
   // console.log(imageFileUploadProgress, imageFileUploadError);
 
   const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -96,7 +105,10 @@ const DashProfile: React.FC = () => {
 
     try {
       dispatch(userUpdateStart());
-      const res: IUserResponse = await userUpdate(currentUser!._id, formData);
+      const res: IUserResponse = await userUpdate(currentUser!._id, {
+        ...formData,
+        access_token: cookies.access_token,
+      });
       dispatch(userUpdateSuccess(res));
     } catch (err) {
       const error = err as AxiosError | Error;
@@ -105,6 +117,8 @@ const DashProfile: React.FC = () => {
       } else {
         dispatch(userUpdateFailure(error.message));
       }
+    } finally {
+      setFormData(initialState);
     }
   };
 
@@ -124,7 +138,11 @@ const DashProfile: React.FC = () => {
             className="hidden"
           />
           <img
-            src={imageFileUrl ?? currentUser?.profilePicture}
+            src={
+              imageFileUrl ||
+              currentUserUpdate?.profilePicture ||
+              currentUser?.profilePicture
+            }
             alt="Profile Picture"
             onClick={() => filePickerRef.current?.click()}
             className="w-full h-full object-cover rounded-full hover:cursor-pointer"
@@ -141,7 +159,7 @@ const DashProfile: React.FC = () => {
             placeholder="Jhon Doe"
             id="username"
             name="username"
-            defaultValue={currentUser?.username}
+            defaultValue={currentUserUpdate?.username || currentUser?.username}
             onChange={handleChange}
             disabled={isLoading}
             required
@@ -154,7 +172,7 @@ const DashProfile: React.FC = () => {
             placeholder="example@mail.com"
             id="email"
             name="email"
-            defaultValue={currentUser?.email}
+            defaultValue={currentUserUpdate?.email || currentUser?.email}
             onChange={handleChange}
             disabled={isLoading}
             required
