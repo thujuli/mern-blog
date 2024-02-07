@@ -8,6 +8,7 @@ interface IGoogleResponse {
 
 type ICurrentUser = IUserResponse | null;
 type IErrMsg = string | null;
+type ISuccessMsg = string | null;
 type IIsLoading = boolean;
 
-export type { IGoogleResponse, ICurrentUser, IErrMsg, IIsLoading };
+export type { IGoogleResponse, ICurrentUser, IErrMsg, IIsLoading, ISuccessMsg };
