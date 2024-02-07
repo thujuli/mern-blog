@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { ICurrentUser, IIsLoading } from "../types/authType";
-import { Button, Label, TextInput } from "flowbite-react";
+import {
+  ICurrentUser,
+  IErrMsg,
+  IIsLoading,
+  ISuccessMsg,
+} from "../types/authType";
+import { Alert, Button, Label, TextInput } from "flowbite-react";
 import {
   getDownloadURL,
   getStorage,
@@ -12,13 +17,15 @@ import {
 import app from "../utils/firebase";
 import { IUserForm, IUserResponse } from "../types/userType";
 import { userUpdate } from "../api/userApi";
-import {
-  userUpdateFailure,
-  userUpdateStart,
-  userUpdateSuccess,
-} from "../redux/slices/userSlice";
 import axios, { AxiosError } from "axios";
 import { useCookies } from "react-cookie";
+import { HiInformationCircle } from "react-icons/hi";
+import {
+  userUpdateFailure,
+  userUpdateReset,
+  userUpdateStart,
+  userUpdateSuccess,
+} from "../redux/slices/authSlice";
 
 const initialState: IUserForm = {
   username: "",
@@ -27,17 +34,16 @@ const initialState: IUserForm = {
   profilePicture: "",
 };
 
-interface selectorUpdateUser {
+interface UseSelector {
   currentUser: ICurrentUser;
   isLoading: IIsLoading;
+  errMsg: IErrMsg;
+  successMsg: ISuccessMsg;
 }
 
 const DashProfile: React.FC = () => {
-  const { currentUser }: { currentUser: ICurrentUser } = useSelector(
-    (state: RootState) => state.auth
-  );
-  const { currentUser: currentUserUpdate, isLoading }: selectorUpdateUser =
-    useSelector((state: RootState) => state.user);
+  const { currentUser, isLoading, errMsg, successMsg }: UseSelector =
+    useSelector((state: RootState) => state.auth);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState<
@@ -52,13 +58,9 @@ const DashProfile: React.FC = () => {
   const [cookies] = useCookies(["access_token"]);
   // console.log(imageFileUploadProgress, imageFileUploadError);
 
-  const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const selectedFiles = e.target.files;
-    if (selectedFiles && selectedFiles.length > 0) {
-      setImageFile(selectedFiles[0]);
-      setImageFileUrl(URL.createObjectURL(selectedFiles[0]));
-    }
-  };
+  useEffect(() => {
+    dispatch(userUpdateReset());
+  }, [dispatch]);
 
   // TODO: Blocked by CORS Policy Firebase Storage
   // Effort => Setup from GCP via terminal
@@ -93,15 +95,20 @@ const DashProfile: React.FC = () => {
     }
   }, [imageFile]);
 
+  const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      setImageFile(selectedFiles[0]);
+      setImageFileUrl(URL.createObjectURL(selectedFiles[0]));
+    }
+  };
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (Object.keys(formData).length === 0) {
-      return;
-    }
 
     try {
       dispatch(userUpdateStart());
@@ -109,7 +116,9 @@ const DashProfile: React.FC = () => {
         ...formData,
         access_token: cookies.access_token,
       });
-      dispatch(userUpdateSuccess(res));
+      dispatch(
+        userUpdateSuccess({ message: "User updated successfully", user: res })
+      );
     } catch (err) {
       const error = err as AxiosError | Error;
       if (axios.isAxiosError(error)) {
@@ -138,11 +147,7 @@ const DashProfile: React.FC = () => {
             className="hidden"
           />
           <img
-            src={
-              imageFileUrl ||
-              currentUserUpdate?.profilePicture ||
-              currentUser?.profilePicture
-            }
+            src={imageFileUrl || currentUser?.profilePicture}
             alt="Profile Picture"
             onClick={() => filePickerRef.current?.click()}
             className="w-full h-full object-cover rounded-full hover:cursor-pointer"
@@ -159,7 +164,7 @@ const DashProfile: React.FC = () => {
             placeholder="Jhon Doe"
             id="username"
             name="username"
-            defaultValue={currentUserUpdate?.username || currentUser?.username}
+            defaultValue={currentUser?.username}
             onChange={handleChange}
             disabled={isLoading}
             required
@@ -172,7 +177,7 @@ const DashProfile: React.FC = () => {
             placeholder="example@mail.com"
             id="email"
             name="email"
-            defaultValue={currentUserUpdate?.email || currentUser?.email}
+            defaultValue={currentUser?.email}
             onChange={handleChange}
             disabled={isLoading}
             required
@@ -207,6 +212,16 @@ const DashProfile: React.FC = () => {
         <span className="cursor-pointer text-red-500">Delete Account</span>
         <span className="cursor-pointer text-red-500">Logout</span>
       </div>
+      {errMsg && (
+        <Alert color="failure" icon={HiInformationCircle} className="mt-5">
+          <span className="font-medium">{errMsg}</span>
+        </Alert>
+      )}
+      {successMsg && (
+        <Alert color="success" icon={HiInformationCircle} className="mt-5">
+          <span className="font-medium">{successMsg}</span>
+        </Alert>
+      )}
     </div>
   );
 };

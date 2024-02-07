@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import { IUserForm } from "../types/userType";
 import { IIsLoading, IErrMsg } from "../types/authType";
-import { authDone, authFailure, authStart } from "../redux/slices/authSlice";
+import { authReset, authFailure, authStart } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { registrationStore } from "../api/authApi";
@@ -31,6 +31,10 @@ const RegistrationPage: React.FC = function () {
     (state: RootState) => state.auth
   );
 
+  useEffect(() => {
+    dispatch(authReset());
+  }, [dispatch]);
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -40,7 +44,7 @@ const RegistrationPage: React.FC = function () {
     try {
       dispatch(authStart());
       await registrationStore(formData);
-      dispatch(authDone());
+      dispatch(authReset());
       navigate("/login");
     } catch (err) {
       const error = err as AxiosError | Error;

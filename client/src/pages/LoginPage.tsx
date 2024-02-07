@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
@@ -8,6 +8,7 @@ import {
   authStart,
   authFailure,
   loginSuccess,
+  authReset,
 } from "../redux/slices/authSlice";
 import { IUserForm, IUserResponse } from "../types/userType";
 import { RootState } from "../redux/store";
@@ -36,6 +37,10 @@ const LoginPage: React.FC = function () {
     (state: RootState) => state.auth
   );
   const [cookies, setCookie] = useCookies(["access_token"]);
+
+  useEffect(() => {
+    dispatch(authReset());
+  }, [dispatch]);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
