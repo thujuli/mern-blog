@@ -1,4 +1,4 @@
-interface IUserForm {
+interface UserForm {
   username: string;
   email: string;
   password: string;
@@ -6,7 +6,7 @@ interface IUserForm {
   access_token?: string;
 }
 
-interface IUserResponse {
+interface UserResponse {
   _id: string;
   username: string;
   email: string;
@@ -17,4 +17,4 @@ interface IUserResponse {
   access_token?: string;
 }
 
-export type { IUserForm, IUserResponse };
+export type { UserForm, UserResponse };

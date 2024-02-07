@@ -1,14 +1,14 @@
-import { IUserResponse } from "./userType";
+import { UserResponse } from "./userType";
 
-interface IGoogleResponse {
+interface GoogleResponse {
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
 }
 
-type ICurrentUser = IUserResponse | null;
-type IErrMsg = string | null;
-type ISuccessMsg = string | null;
-type IIsLoading = boolean;
+type CurrentUser = UserResponse | null;
+type ErrMsg = string | null;
+type SuccessMsg = string | null;
+type IsLoading = boolean;
 
-export type { IGoogleResponse, ICurrentUser, IErrMsg, IIsLoading, ISuccessMsg };
+export type { GoogleResponse, CurrentUser, ErrMsg, IsLoading, SuccessMsg };

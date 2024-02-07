@@ -3,14 +3,14 @@ import User from "../models/user.model";
 import bcryptjs from "bcryptjs";
 import errorHandler from "../utils/error";
 import jwt from "jsonwebtoken";
-import { IAuthGoogle, IAuthLogin, IAuthRegistration } from "auth.type";
+import { AuthGoogle, AuthLogin, AuthRegistration } from "auth.type";
 
 const registrationStore = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { username, email, password }: IAuthRegistration = req.body;
+  const { username, email, password }: AuthRegistration = req.body;
 
   if (
     !username ||
@@ -52,7 +52,7 @@ const registrationStore = async (
 };
 
 const loginStore = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password }: IAuthLogin = req.body;
+  const { email, password }: AuthLogin = req.body;
 
   if (!email || !password || email === "" || password === "") {
     return next(errorHandler(400, "All fields are required"));
@@ -79,7 +79,7 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const googleStore = async (req: Request, res: Response, next: NextFunction) => {
-  const { displayName, email, photoURL }: IAuthGoogle = req.body;
+  const { displayName, email, photoURL }: AuthGoogle = req.body;
 
   try {
     const user = await User.findOne({ email });

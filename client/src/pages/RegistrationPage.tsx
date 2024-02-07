@@ -3,8 +3,8 @@ import MainLayout from "../layouts/MainLayout";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
-import { IUserForm } from "../types/userType";
-import { IIsLoading, IErrMsg } from "../types/authType";
+import { UserForm } from "../types/userType";
+import { IsLoading, ErrMsg } from "../types/authType";
 import { authReset, authFailure, authStart } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -12,22 +12,22 @@ import { registrationStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
 
-const initialFormData: IUserForm = {
+const initialState: UserForm = {
   username: "",
   email: "",
   password: "",
 };
 
-interface IUseSelector {
-  isLoading: IIsLoading;
-  errMsg: IErrMsg;
+interface UseSelector {
+  isLoading: IsLoading;
+  errMsg: ErrMsg;
 }
 
 const RegistrationPage: React.FC = function () {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoading, errMsg }: IUseSelector = useSelector(
+  const { isLoading, errMsg }: UseSelector = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -55,7 +55,7 @@ const RegistrationPage: React.FC = function () {
         dispatch(authFailure(error.message ?? "An unknown error occured"));
       }
     } finally {
-      setFormData(initialFormData);
+      setFormData(initialState);
     }
   };
   return (

@@ -1,3 +1,3 @@
-type IMode = "light" | "dark";
+type Mode = "light" | "dark";
 
-export type { IMode };
+export type { Mode };

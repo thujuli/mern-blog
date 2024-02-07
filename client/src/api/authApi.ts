@@ -1,8 +1,8 @@
 import axios from "axios";
-import { IUserForm } from "../types/userType";
-import { IGoogleResponse } from "../types/authType";
+import { UserForm } from "../types/userType";
+import { GoogleResponse } from "../types/authType";
 
-const loginStore = async (data: IUserForm) => {
+const loginStore = async (data: UserForm) => {
   const res = await axios.post(
     `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
     data
@@ -10,7 +10,7 @@ const loginStore = async (data: IUserForm) => {
   return res.data;
 };
 
-const registrationStore = async (data: IUserForm) => {
+const registrationStore = async (data: UserForm) => {
   const res = await axios.post(
     `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
     data
@@ -18,7 +18,7 @@ const registrationStore = async (data: IUserForm) => {
   return res.data;
 };
 
-const googleStore = async (data: IGoogleResponse) => {
+const googleStore = async (data: GoogleResponse) => {
   const res = await axios.post(
     `${import.meta.env.VITE_API_BASE_URL}/auth/google`,
     data

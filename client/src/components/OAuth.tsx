@@ -9,12 +9,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { authStart, loginSuccess } from "../redux/slices/authSlice";
 import { RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
-import { IIsLoading } from "../types/authType";
+import { IsLoading } from "../types/authType";
 
 const OAuth: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading }: { isLoading: IIsLoading } = useSelector(
+  const { isLoading }: { isLoading: IsLoading } = useSelector(
     (state: RootState) => state.auth
   );
 
