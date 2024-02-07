@@ -21,6 +21,8 @@ import {
   userUpdateStart,
   userUpdateSuccess,
 } from "../redux/slices/authSlice";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const initialState: UserForm = {
   username: "",
@@ -42,7 +44,7 @@ const DashProfile: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState<
-    string | null
+    number | null
   >(null);
   const [imageFileUploadError, setImageFileUploadError] = useState<
     string | null
@@ -51,15 +53,11 @@ const DashProfile: React.FC = () => {
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const [cookies] = useCookies(["access_token"]);
-  // console.log(imageFileUploadProgress, imageFileUploadError);
 
   useEffect(() => {
     dispatch(userUpdateReset());
   }, [dispatch]);
 
-  // TODO: Blocked by CORS Policy Firebase Storage
-  // Effort => Setup from GCP via terminal
-  //        => Setup from local using gsutil
   useEffect(() => {
     if (imageFile) {
       const uploadImage = async () => {
@@ -73,7 +71,7 @@ const DashProfile: React.FC = () => {
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setImageFileUploadProgress(progress.toFixed(0));
+            setImageFileUploadProgress(Number(progress.toFixed(0)));
           },
           (error) => {
             setImageFileUploadError(`Upload failed: ${error.message}`);
@@ -81,13 +79,14 @@ const DashProfile: React.FC = () => {
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               setImageFileUrl(downloadURL);
-              // setFormData({ ...formData, profilePicture: downloadURL });
+              setFormData({ ...formData, profilePicture: downloadURL });
             });
           }
         );
       };
       uploadImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageFile]);
 
   const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -133,7 +132,7 @@ const DashProfile: React.FC = () => {
         className="flex flex-col gap-4 justify-center"
         onSubmit={handleSubmit}
       >
-        <div className="w-32 h-32 rounded-full border-4 shadow-xl mx-auto">
+        <div className="w-32 h-32 rounded-full shadow-xl mx-auto relative">
           <input
             type="file"
             accept="image/*"
@@ -141,11 +140,20 @@ const DashProfile: React.FC = () => {
             ref={filePickerRef}
             className="hidden"
           />
+          {imageFileUploadProgress ? (
+            <CircularProgressbar
+              value={imageFileUploadProgress || 0}
+              strokeWidth={5}
+              className="w-full h-full absolute top-0 left-0"
+            />
+          ) : (
+            ""
+          )}
           <img
             src={imageFileUrl || currentUser?.profilePicture}
             alt="Profile Picture"
             onClick={() => filePickerRef.current?.click()}
-            className="w-full h-full object-cover rounded-full hover:cursor-pointer"
+            className="w-full h-full object-cover rounded-full border-4 hover:cursor-pointer"
           />
         </div>
         <div>
