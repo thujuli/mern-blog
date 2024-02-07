@@ -10,30 +10,30 @@ import {
   loginSuccess,
   authReset,
 } from "../redux/slices/authSlice";
-import { IUserForm, IUserResponse } from "../types/userType";
+import { UserForm, UserResponse } from "../types/userType";
 import { RootState } from "../redux/store";
 import { loginStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
-import { IErrMsg, IIsLoading } from "../types/authType";
+import { ErrMsg, IsLoading } from "../types/authType";
 import { useCookies } from "react-cookie";
 
-const initialFormData: IUserForm = {
+const initialState: UserForm = {
   username: "",
   email: "",
   password: "",
 };
 
-interface IUseSelector {
-  isLoading: IIsLoading;
-  errMsg: IErrMsg;
+interface UseSelector {
+  isLoading: IsLoading;
+  errMsg: ErrMsg;
 }
 
 const LoginPage: React.FC = function () {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialState);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { errMsg, isLoading }: IUseSelector = useSelector(
+  const { errMsg, isLoading }: UseSelector = useSelector(
     (state: RootState) => state.auth
   );
   const [cookies, setCookie] = useCookies(["access_token"]);
@@ -50,7 +50,7 @@ const LoginPage: React.FC = function () {
 
     try {
       dispatch(authStart());
-      const res: IUserResponse = await loginStore(formData);
+      const res: UserResponse = await loginStore(formData);
       const { access_token, ...rest } = res;
 
       setCookie("access_token", access_token);
@@ -65,7 +65,7 @@ const LoginPage: React.FC = function () {
         dispatch(authFailure(error.message ?? "An unknown error occured"));
       }
     } finally {
-      setFormData(initialFormData);
+      setFormData(initialState);
     }
   };
   return (

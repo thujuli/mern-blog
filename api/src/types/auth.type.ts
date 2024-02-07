@@ -1,18 +1,18 @@
-interface IAuthRegistration {
+interface AuthRegistration {
   username: string;
   email: string;
   password: string;
 }
 
-interface IAuthLogin {
+interface AuthLogin {
   email: string;
   password: string;
 }
 
-interface IAuthGoogle {
+interface AuthGoogle {
   displayName: string;
   email: string;
   photoURL: string;
 }
 
-export type { IAuthGoogle, IAuthLogin, IAuthRegistration };
+export type { AuthGoogle, AuthLogin, AuthRegistration };

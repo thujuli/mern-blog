@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IUserResponse } from "../../types/userType";
+import { UserResponse } from "../../types/userType";
 import {
-  ICurrentUser,
-  IErrMsg,
-  IIsLoading,
-  ISuccessMsg,
+  CurrentUser,
+  ErrMsg,
+  IsLoading,
+  SuccessMsg,
 } from "../../types/authType";
 
-interface IInitialState {
-  currentUser: ICurrentUser;
-  errMsg: IErrMsg;
-  isLoading: IIsLoading;
-  successMsg: ISuccessMsg;
+interface InitialState {
+  currentUser: CurrentUser;
+  errMsg: ErrMsg;
+  isLoading: IsLoading;
+  successMsg: SuccessMsg;
 }
 
-const initialState: IInitialState = {
+const initialState: InitialState = {
   currentUser: null,
   errMsg: null,
   isLoading: false,
@@ -29,7 +29,7 @@ const userSlice = createSlice({
       state.isLoading = true;
       state.errMsg = null;
     },
-    loginSuccess: (state, action: PayloadAction<IUserResponse>) => {
+    loginSuccess: (state, action: PayloadAction<UserResponse>) => {
       state.currentUser = action.payload;
       state.isLoading = false;
       state.errMsg = null;
@@ -49,7 +49,7 @@ const userSlice = createSlice({
     },
     userUpdateSuccess: (
       state,
-      action: PayloadAction<{ message: string; user: ICurrentUser }>
+      action: PayloadAction<{ message: string; user: CurrentUser }>
     ) => {
       state.isLoading = false;
       state.currentUser = action.payload.user;

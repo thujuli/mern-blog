@@ -1,14 +1,14 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { IMode } from "../types/themeType";
+import { Mode } from "../types/themeType";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const ThemeProvider: React.FC<Props> = ({ children }: Props) => {
-  const { mode }: { mode: IMode } = useSelector(
+  const { mode }: { mode: Mode } = useSelector(
     (state: RootState) => state.theme
   );
   return (

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { IUserForm } from "../types/userType";
+import { UserForm } from "../types/userType";
 
-const userUpdate = async (userId: string, data: IUserForm) => {
+const userUpdate = async (userId: string, data: UserForm) => {
   const res = await axios.put(
     `${import.meta.env.VITE_API_BASE_URL}/users/${userId}`,
     data

@@ -5,13 +5,13 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { IUserResponse } from "../types/userType";
-import { ICurrentUser } from "../types/authType";
-import { IMode } from "../types/themeType";
+import { UserResponse } from "../types/userType";
+import { CurrentUser } from "../types/authType";
+import { Mode } from "../types/themeType";
 import { themeToggle } from "../redux/slices/themeSlice";
 
 interface PropsUserDropdown {
-  currentUser: IUserResponse;
+  currentUser: UserResponse;
 }
 
 const LoginBtn: React.FC = () => {
@@ -56,11 +56,11 @@ const UserDropdown: React.FC<PropsUserDropdown> = ({
 
 const NavbarComponent: React.FC = () => {
   const path = useLocation().pathname;
-  const { currentUser }: { currentUser: ICurrentUser } = useSelector(
+  const { currentUser }: { currentUser: CurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
   const dispatch = useDispatch();
-  const { mode }: { mode: IMode } = useSelector(
+  const { mode }: { mode: Mode } = useSelector(
     (state: RootState) => state.theme
   );
 

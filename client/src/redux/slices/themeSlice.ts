@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IMode } from "../../types/themeType";
+import { Mode } from "../../types/themeType";
 
-interface IInitialState {
-  mode: IMode;
+interface InitialState {
+  mode: Mode;
 }
 
-const initialState: IInitialState = {
+const initialState: InitialState = {
   mode: "light",
 };
 

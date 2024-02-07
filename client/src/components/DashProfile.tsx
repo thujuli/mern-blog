@@ -1,12 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import {
-  ICurrentUser,
-  IErrMsg,
-  IIsLoading,
-  ISuccessMsg,
-} from "../types/authType";
+import { CurrentUser, ErrMsg, IsLoading, SuccessMsg } from "../types/authType";
 import { Alert, Button, Label, TextInput } from "flowbite-react";
 import {
   getDownloadURL,
@@ -15,7 +10,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import app from "../utils/firebase";
-import { IUserForm, IUserResponse } from "../types/userType";
+import { UserForm, UserResponse } from "../types/userType";
 import { userUpdate } from "../api/userApi";
 import axios, { AxiosError } from "axios";
 import { useCookies } from "react-cookie";
@@ -27,7 +22,7 @@ import {
   userUpdateSuccess,
 } from "../redux/slices/authSlice";
 
-const initialState: IUserForm = {
+const initialState: UserForm = {
   username: "",
   email: "",
   password: "",
@@ -35,10 +30,10 @@ const initialState: IUserForm = {
 };
 
 interface UseSelector {
-  currentUser: ICurrentUser;
-  isLoading: IIsLoading;
-  errMsg: IErrMsg;
-  successMsg: ISuccessMsg;
+  currentUser: CurrentUser;
+  isLoading: IsLoading;
+  errMsg: ErrMsg;
+  successMsg: SuccessMsg;
 }
 
 const DashProfile: React.FC = () => {
@@ -112,7 +107,7 @@ const DashProfile: React.FC = () => {
 
     try {
       dispatch(userUpdateStart());
-      const res: IUserResponse = await userUpdate(currentUser!._id, {
+      const res: UserResponse = await userUpdate(currentUser!._id, {
         ...formData,
         access_token: cookies.access_token,
       });
