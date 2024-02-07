@@ -33,7 +33,7 @@ const UserDropdown: React.FC<PropsUserDropdown> = ({
         <img
           src={currentUser.profilePicture}
           alt=""
-          className="h-10 w-10 rounded-full"
+          className="h-10 w-10 rounded-full object-cover"
         />
       }
       arrowIcon={false}
