@@ -73,12 +73,16 @@ const DashProfile: React.FC = () => {
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setImageFileUploadProgress(Number(progress.toFixed(0)));
           },
-          (error) => {
-            setImageFileUploadError(`Upload failed: ${error.message}`);
+          () => {
+            setImageFileUploadError(
+              `Could not upload image (File must be less than 2MB)`
+            );
+            setImageFileUploadProgress(0);
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               setImageFileUrl(downloadURL);
+              setImageFileUploadError(null);
               setFormData({ ...formData, profilePicture: downloadURL });
             });
           }
@@ -113,6 +117,7 @@ const DashProfile: React.FC = () => {
       dispatch(
         userUpdateSuccess({ message: "User updated successfully", user: res })
       );
+      setImageFileUploadProgress(0);
     } catch (err) {
       const error = err as AxiosError | Error;
       if (axios.isAxiosError(error)) {
@@ -132,7 +137,10 @@ const DashProfile: React.FC = () => {
         className="flex flex-col gap-4 justify-center"
         onSubmit={handleSubmit}
       >
-        <div className="w-32 h-32 rounded-full shadow-xl mx-auto relative">
+        <div
+          className="w-32 h-32 rounded-full shadow-xl mx-auto relative  hover:cursor-pointer"
+          onClick={() => filePickerRef.current?.click()}
+        >
           <input
             type="file"
             accept="image/*"
@@ -152,10 +160,14 @@ const DashProfile: React.FC = () => {
           <img
             src={imageFileUrl || currentUser?.profilePicture}
             alt="Profile Picture"
-            onClick={() => filePickerRef.current?.click()}
-            className="w-full h-full object-cover rounded-full border-4 hover:cursor-pointer"
+            className="w-full h-full object-cover rounded-full border-4"
           />
         </div>
+        {imageFileUploadError && (
+          <Alert color="failure" icon={HiInformationCircle}>
+            <span className="font-medium">{imageFileUploadError}</span>
+          </Alert>
+        )}
         <div>
           <Label
             value="Username"
