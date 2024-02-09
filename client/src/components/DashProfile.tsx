@@ -12,7 +12,6 @@ import {
 import app from "../utils/firebase";
 import { UserForm, UserResponse } from "../types/userType";
 import { userDestroy, userUpdate } from "../api/userApi";
-import axios, { AxiosError } from "axios";
 import {
   HiInformationCircle,
   HiOutlineExclamationCircle,
@@ -29,6 +28,7 @@ import {
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
+import { handleDispatchError } from "../utils/error";
 
 const initialState: UserForm = {
   username: "",
@@ -122,13 +122,8 @@ const DashProfile: React.FC = () => {
         userUpdateSuccess({ message: "User updated successfully", user: res })
       );
       setImageFileUploadProgress(0);
-    } catch (err) {
-      const error = err as AxiosError | Error;
-      if (axios.isAxiosError(error)) {
-        dispatch(userUpdateFailure(error.response?.data.message));
-      } else {
-        dispatch(userUpdateFailure(error.message));
-      }
+    } catch (error) {
+      handleDispatchError(error, dispatch, userUpdateFailure);
     } finally {
       setFormData(initialState);
     }
@@ -145,15 +140,8 @@ const DashProfile: React.FC = () => {
         dispatch(userDestroySuccess());
         navigate("/");
       }
-    } catch (err) {
-      const error = err as AxiosError | Error;
-      if (axios.isAxiosError(error)) {
-        dispatch(userDestroyFailure(error.response?.data.message));
-      } else {
-        dispatch(
-          userDestroyFailure(error.message ?? "An unknown error occured")
-        );
-      }
+    } catch (error) {
+      handleDispatchError(error, dispatch, userDestroyFailure);
     }
   };
 
