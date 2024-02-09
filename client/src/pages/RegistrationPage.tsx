@@ -9,8 +9,8 @@ import { authReset, authFailure, authStart } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { registrationStore } from "../api/authApi";
-import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
+import { handleDispatchError } from "../utils/error";
 
 const initialState: UserForm = {
   username: "",
@@ -46,14 +46,8 @@ const RegistrationPage: React.FC = function () {
       await registrationStore(formData);
       dispatch(authReset());
       navigate("/login");
-    } catch (err) {
-      const error = err as AxiosError | Error;
-
-      if (axios.isAxiosError(error)) {
-        dispatch(authFailure(error.response?.data.message));
-      } else {
-        dispatch(authFailure(error.message ?? "An unknown error occured"));
-      }
+    } catch (error) {
+      handleDispatchError(error, dispatch, authFailure);
     } finally {
       setFormData(initialState);
     }

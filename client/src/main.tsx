@@ -13,7 +13,6 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import ThemeProvider from "./components/ThemeProvider.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
-import { CookiesProvider } from "react-cookie";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -31,11 +30,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <CookiesProvider defaultSetOptions={{ path: "/" }}>
-          <ThemeProvider>
-            <RouterProvider router={router} />
-          </ThemeProvider>
-        </CookiesProvider>
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>

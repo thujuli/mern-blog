@@ -13,9 +13,9 @@ import {
 import { UserForm, UserResponse } from "../types/userType";
 import { RootState } from "../redux/store";
 import { loginStore } from "../api/authApi";
-import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
 import { ErrMsg, IsLoading } from "../types/authType";
+import { handleDispatchError } from "../utils/error";
 
 const initialState: UserForm = {
   username: "",
@@ -51,14 +51,8 @@ const LoginPage: React.FC = function () {
       const res: UserResponse = await loginStore(formData);
       dispatch(loginSuccess(res));
       navigate("/");
-    } catch (err) {
-      const error = err as Error | AxiosError;
-
-      if (axios.isAxiosError(error)) {
-        dispatch(authFailure(error.response?.data.message));
-      } else {
-        dispatch(authFailure(error.message ?? "An unknown error occured"));
-      }
+    } catch (error) {
+      handleDispatchError(error, dispatch, authFailure);
     } finally {
       setFormData(initialState);
     }
