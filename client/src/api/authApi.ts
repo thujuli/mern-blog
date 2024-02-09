@@ -32,4 +32,11 @@ const googleStore = async (data: GoogleResponse) => {
   return res.data;
 };
 
-export { loginStore, registrationStore, googleStore };
+const logoutDestroy = async () => {
+  const res = await axios.delete(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/logout`
+  );
+  return res.data;
+};
+
+export { loginStore, registrationStore, googleStore, logoutDestroy };

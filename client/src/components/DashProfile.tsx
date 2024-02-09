@@ -24,11 +24,13 @@ import {
   userDestroyStart,
   userDestroySuccess,
   userDestroyFailure,
+  logoutSuccess,
 } from "../redux/slices/authSlice";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 import { handleDispatchError } from "../utils/error";
+import { logoutDestroy } from "../api/authApi";
 
 const initialState: UserForm = {
   username: "",
@@ -145,6 +147,12 @@ const DashProfile: React.FC = () => {
     }
   };
 
+  const handleLogout: React.MouseEventHandler<HTMLSpanElement> = async () => {
+    await logoutDestroy();
+    dispatch(logoutSuccess());
+    navigate("/login");
+  };
+
   return (
     <div className="grow mx-auto p-4 w-full md:w-0 md:max-w-lg">
       <h1 className="mt-10 my-5 font-semibold text-3xl text-center">Profile</h1>
@@ -245,7 +253,9 @@ const DashProfile: React.FC = () => {
         >
           Delete Account
         </span>
-        <span className="cursor-pointer text-red-500">Logout</span>
+        <span className="cursor-pointer text-red-500" onClick={handleLogout}>
+          Logout
+        </span>
       </div>
       {errMsg && (
         <Alert color="failure" icon={HiInformationCircle} className="mt-5">

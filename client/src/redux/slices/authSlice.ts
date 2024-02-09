@@ -35,6 +35,11 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.errMsg = null;
     },
+    logoutSuccess: (state) => {
+      state.currentUser = null;
+      state.isLoading = false;
+      state.errMsg = null;
+    },
     authReset: (state) => {
       state.isLoading = false;
       state.errMsg = null;
@@ -90,6 +95,7 @@ export const {
   authFailure,
   authReset,
   loginSuccess,
+  logoutSuccess,
   userUpdateFailure,
   userReset,
   userUpdateStart,

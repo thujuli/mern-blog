@@ -121,4 +121,10 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { registrationStore, loginStore, googleStore };
+const logoutDestroy = (req: Request, res: Response) => {
+  res
+    .clearCookie("access_token")
+    .json({ message: "User has successfully logout" });
+};
+
+export { registrationStore, loginStore, googleStore, logoutDestroy };
