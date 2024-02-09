@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CurrentUser, ErrMsg, IsLoading, SuccessMsg } from "../types/authType";
-import { Alert, Button, Label, TextInput } from "flowbite-react";
+import { Alert, Button, Label, Modal, TextInput } from "flowbite-react";
 import {
   getDownloadURL,
   getStorage,
@@ -11,18 +11,24 @@ import {
 } from "firebase/storage";
 import app from "../utils/firebase";
 import { UserForm, UserResponse } from "../types/userType";
-import { userUpdate } from "../api/userApi";
+import { userDestroy, userUpdate } from "../api/userApi";
 import axios, { AxiosError } from "axios";
-import { useCookies } from "react-cookie";
-import { HiInformationCircle } from "react-icons/hi";
+import {
+  HiInformationCircle,
+  HiOutlineExclamationCircle,
+} from "react-icons/hi";
 import {
   userUpdateFailure,
-  userUpdateReset,
+  userReset,
   userUpdateStart,
   userUpdateSuccess,
+  userDestroyStart,
+  userDestroySuccess,
+  userDestroyFailure,
 } from "../redux/slices/authSlice";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate } from "react-router-dom";
 
 const initialState: UserForm = {
   username: "",
@@ -49,13 +55,14 @@ const DashProfile: React.FC = () => {
   const [imageFileUploadError, setImageFileUploadError] = useState<
     string | null
   >(null);
-  const filePickerRef = useRef<HTMLInputElement>(null);
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState(initialState);
+  const filePickerRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
-  const [cookies] = useCookies(["access_token"]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(userUpdateReset());
+    dispatch(userReset());
   }, [dispatch]);
 
   useEffect(() => {
@@ -110,10 +117,7 @@ const DashProfile: React.FC = () => {
 
     try {
       dispatch(userUpdateStart());
-      const res: UserResponse = await userUpdate(currentUser!._id, {
-        ...formData,
-        access_token: cookies.access_token,
-      });
+      const res: UserResponse = await userUpdate(currentUser!._id, formData);
       dispatch(
         userUpdateSuccess({ message: "User updated successfully", user: res })
       );
@@ -127,6 +131,29 @@ const DashProfile: React.FC = () => {
       }
     } finally {
       setFormData(initialState);
+    }
+  };
+
+  const handleUserDestroy: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async () => {
+    setShowModal(false);
+    try {
+      if (currentUser) {
+        dispatch(userDestroyStart());
+        await userDestroy(currentUser._id);
+        dispatch(userDestroySuccess());
+        navigate("/");
+      }
+    } catch (err) {
+      const error = err as AxiosError | Error;
+      if (axios.isAxiosError(error)) {
+        dispatch(userDestroyFailure(error.response?.data.message));
+      } else {
+        dispatch(
+          userDestroyFailure(error.message ?? "An unknown error occured")
+        );
+      }
     }
   };
 
@@ -224,7 +251,12 @@ const DashProfile: React.FC = () => {
         </Button>
       </form>
       <div className="flex flex-row justify-between mt-3">
-        <span className="cursor-pointer text-red-500">Delete Account</span>
+        <span
+          className="cursor-pointer text-red-500"
+          onClick={() => setShowModal(true)}
+        >
+          Delete Account
+        </span>
         <span className="cursor-pointer text-red-500">Logout</span>
       </div>
       {errMsg && (
@@ -237,6 +269,30 @@ const DashProfile: React.FC = () => {
           <span className="font-medium">{successMsg}</span>
         </Alert>
       )}
+      <Modal
+        show={showModal}
+        size="md"
+        onClose={() => setShowModal(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this product?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handleUserDestroy}>
+                Yes, I'm sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

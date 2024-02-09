@@ -72,7 +72,7 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
     const { password: pass, ...rest } = user.toObject();
 
-    res.json({ ...rest, access_token: token });
+    res.cookie("access_token", token, { httpOnly: true }).json(rest);
   } catch (error) {
     next(error);
   }
@@ -88,7 +88,6 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
       const { password, ...rest } = user.toObject();
 
       res
-        .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
         })
@@ -112,7 +111,6 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
       const { password: pass, ...rest } = user.toObject();
 
       res
-        .status(200)
         .cookie("access_token", token, {
           httpOnly: true,
         })
