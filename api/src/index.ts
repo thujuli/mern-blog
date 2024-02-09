@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
 import authRoute from "./routes/auth.route";
 import userRoute from "./routes/user.route";
@@ -15,10 +16,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 
 app.listen(process.env.PORT, () =>

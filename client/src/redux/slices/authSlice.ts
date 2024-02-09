@@ -25,6 +25,7 @@ const userSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    // Authentication
     authStart: (state) => {
       state.isLoading = true;
       state.errMsg = null;
@@ -41,6 +42,13 @@ const userSlice = createSlice({
     authFailure: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
       state.errMsg = action.payload;
+    },
+
+    // User Update
+    userReset: (state) => {
+      state.errMsg = null;
+      state.isLoading = false;
+      state.successMsg = null;
     },
     userUpdateStart: (state) => {
       state.isLoading = true;
@@ -59,10 +67,20 @@ const userSlice = createSlice({
       state.isLoading = false;
       state.errMsg = action.payload;
     },
-    userUpdateReset: (state) => {
+
+    // User Destroy
+    userDestroyStart: (state) => {
+      state.isLoading = true;
       state.errMsg = null;
-      state.isLoading = false;
       state.successMsg = null;
+    },
+    userDestroySuccess: (state) => {
+      state.isLoading = false;
+      state.currentUser = null;
+    },
+    userDestroyFailure: (state, action: PayloadAction<string>) => {
+      state.isLoading = false;
+      state.errMsg = action.payload;
     },
   },
 });
@@ -73,8 +91,11 @@ export const {
   authReset,
   loginSuccess,
   userUpdateFailure,
-  userUpdateReset,
+  userReset,
   userUpdateStart,
   userUpdateSuccess,
+  userDestroyFailure,
+  userDestroyStart,
+  userDestroySuccess,
 } = userSlice.actions;
 export default userSlice.reducer;

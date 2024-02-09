@@ -11,7 +11,7 @@ interface UpdateFields {
 }
 
 const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
-  if (res.locals.user !== req.params.userId) {
+  if (res.locals.user.id !== req.params.userId) {
     return next(errorHandler(403, "You are not allowed to update this user"));
   }
 
@@ -66,4 +66,17 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { userUpdate };
+const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
+  if (res.locals.user.id !== req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to delete this user"));
+  }
+
+  try {
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json({ message: "User has been deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { userUpdate, userDestroy };

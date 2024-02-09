@@ -12,7 +12,7 @@ const userVerificationMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const { access_token } = req.body;
+  const { access_token } = req.cookies;
   if (!access_token) {
     return next(errorHandler(401, "Unauthorized"));
   }
@@ -22,7 +22,7 @@ const userVerificationMiddleware = (
       access_token,
       process.env.JWT_SECRET_KEY
     ) as DecodedJwt;
-    res.locals.user = decoded.id;
+    res.locals.user = decoded;
     next();
   } catch (error) {
     next(error);

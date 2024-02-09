@@ -16,7 +16,6 @@ import { loginStore } from "../api/authApi";
 import axios, { AxiosError } from "axios";
 import OAuth from "../components/OAuth";
 import { ErrMsg, IsLoading } from "../types/authType";
-import { useCookies } from "react-cookie";
 
 const initialState: UserForm = {
   username: "",
@@ -36,7 +35,6 @@ const LoginPage: React.FC = function () {
   const { errMsg, isLoading }: UseSelector = useSelector(
     (state: RootState) => state.auth
   );
-  const [cookies, setCookie] = useCookies(["access_token"]);
 
   useEffect(() => {
     dispatch(authReset());
@@ -51,10 +49,7 @@ const LoginPage: React.FC = function () {
     try {
       dispatch(authStart());
       const res: UserResponse = await loginStore(formData);
-      const { access_token, ...rest } = res;
-
-      setCookie("access_token", access_token);
-      dispatch(loginSuccess(rest));
+      dispatch(loginSuccess(res));
       navigate("/");
     } catch (err) {
       const error = err as Error | AxiosError;
