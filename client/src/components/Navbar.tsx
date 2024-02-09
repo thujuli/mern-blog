@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Dropdown, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,8 @@ import { UserResponse } from "../types/userType";
 import { CurrentUser } from "../types/authType";
 import { Mode } from "../types/themeType";
 import { themeToggle } from "../redux/slices/themeSlice";
+import { logoutDestroy } from "../api/authApi";
+import { logoutSuccess } from "../redux/slices/authSlice";
 
 interface PropsUserDropdown {
   currentUser: UserResponse;
@@ -27,6 +29,15 @@ const LoginBtn: React.FC = () => {
 const UserDropdown: React.FC<PropsUserDropdown> = ({
   currentUser,
 }: PropsUserDropdown) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout: React.MouseEventHandler<HTMLDivElement> = async () => {
+    await logoutDestroy();
+    dispatch(logoutSuccess());
+    navigate("/login");
+  };
+
   return (
     <Dropdown
       label={
@@ -49,7 +60,9 @@ const UserDropdown: React.FC<PropsUserDropdown> = ({
         <Dropdown.Item>Dashboard</Dropdown.Item>
       </Link>
       <Dropdown.Divider />
-      <Dropdown.Item>Logout</Dropdown.Item>
+      <div onClick={handleLogout}>
+        <Dropdown.Item>Logout</Dropdown.Item>
+      </div>
     </Dropdown>
   );
 };
