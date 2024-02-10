@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import bcryptjs from "bcryptjs";
 import errorHandler from "../utils/error";
 import User from "../models/user.model";
-import { UserRequest, UserResponse } from "user.type";
+import { UserRequest, UserFields } from "user.type";
 
 const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
   if (res.locals.user.id !== req.params.userId) {
@@ -10,9 +10,9 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   const { username, email, profilePicture, password }: UserRequest = req.body;
-  const updateFields: UserResponse = {};
+  const userFields: UserFields = {};
   if (profilePicture) {
-    updateFields.profilePicture = profilePicture;
+    userFields.profilePicture = profilePicture;
   }
 
   if (email) {
@@ -25,7 +25,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
       return next(errorHandler(400, "Email already exists"));
     }
 
-    updateFields.email = email;
+    userFields.email = email;
   }
 
   if (username) {
@@ -52,7 +52,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    updateFields.username = username;
+    userFields.username = username;
   }
 
   if (password) {
@@ -60,13 +60,13 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
       return next(errorHandler(400, "Password must be at least 6 characters"));
     }
 
-    updateFields.password = bcryptjs.hashSync(password, 10);
+    userFields.password = bcryptjs.hashSync(password, 10);
   }
 
   try {
     const userUpdate = await User.findByIdAndUpdate(
       req.params.userId,
-      { $set: updateFields },
+      { $set: userFields },
       { new: true }
     );
     const { password: pass, ...rest } = userUpdate.toObject();
