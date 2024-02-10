@@ -265,7 +265,7 @@ const DashProfile: React.FC = () => {
         </Button>
       </form>
       {currentUser?.isAdmin && (
-        <Link to="/create-post">
+        <Link to="/posts/create">
           <Button
             gradientDuoTone="pinkToOrange"
             type="button"

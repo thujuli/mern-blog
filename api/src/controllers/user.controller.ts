@@ -2,21 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import bcryptjs from "bcryptjs";
 import errorHandler from "../utils/error";
 import User from "../models/user.model";
-
-interface UpdateFields {
-  username?: string;
-  email?: string;
-  password?: string;
-  profilePicture?: string;
-}
+import { UserRequest, UserResponse } from "user.type";
 
 const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
   if (res.locals.user.id !== req.params.userId) {
     return next(errorHandler(403, "You are not allowed to update this user"));
   }
 
-  const { username, email, profilePicture, password } = req.body;
-  const updateFields: UpdateFields = {};
+  const { username, email, profilePicture, password }: UserRequest = req.body;
+  const updateFields: UserResponse = {};
 
   if (profilePicture) {
     updateFields.profilePicture = profilePicture;
