@@ -19,7 +19,9 @@ const DashboardPage: React.FC = () => {
     <MainLayout>
       <div className="min-h-screen flex flex-col sm:flex-row">
         {/* sidebar */}
-        <DashSidebar />
+        <div>
+          <DashSidebar />
+        </div>
         {/* profile */}
         {tab === "profile" && <DashProfile />}
       </div>

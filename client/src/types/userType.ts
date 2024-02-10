@@ -2,8 +2,8 @@ interface UserForm {
   username: string;
   email: string;
   password: string;
+  isAdmin?: boolean;
   profilePicture?: string;
-  access_token?: string;
 }
 
 interface UserResponse {
@@ -11,6 +11,7 @@ interface UserResponse {
   username: string;
   email: string;
   profilePicture: string;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
   __v: number;

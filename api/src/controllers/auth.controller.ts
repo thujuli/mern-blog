@@ -69,7 +69,10 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
       throw errorHandler(400, "Invalid Credentials");
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET_KEY
+    );
     const { password: pass, ...rest } = user.toObject();
 
     res.cookie("access_token", token, { httpOnly: true }).json(rest);
@@ -84,7 +87,10 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
+      const token = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET_KEY
+      );
       const { password, ...rest } = user.toObject();
 
       res
