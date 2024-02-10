@@ -2,7 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CurrentUser, ErrMsg, IsLoading, SuccessMsg } from "../types/authType";
-import { Alert, Button, Label, Modal, TextInput } from "flowbite-react";
+import {
+  Alert,
+  Button,
+  Label,
+  Modal,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
 import {
   getDownloadURL,
   getStorage,
@@ -28,7 +35,7 @@ import {
 } from "../redux/slices/authSlice";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleDispatchError } from "../utils/error";
 import { logoutDestroy } from "../api/authApi";
 
@@ -51,6 +58,7 @@ const DashProfile: React.FC = () => {
     useSelector((state: RootState) => state.auth);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
+  const [imageFileUploading, setImageFileUploading] = useState(false);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState<
     number | null
   >(null);
@@ -81,17 +89,20 @@ const DashProfile: React.FC = () => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             setImageFileUploadProgress(Number(progress.toFixed(0)));
+            setImageFileUploading(true);
           },
           () => {
             setImageFileUploadError(
               `Could not upload image (File must be less than 2MB)`
             );
             setImageFileUploadProgress(0);
+            setImageFileUploading(false);
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               setImageFileUrl(downloadURL);
               setImageFileUploadError(null);
+              setImageFileUploading(false);
               setFormData({ ...formData, profilePicture: downloadURL });
             });
           }
@@ -157,7 +168,7 @@ const DashProfile: React.FC = () => {
     <div className="grow mx-auto p-4 w-full md:w-0 md:max-w-lg">
       <h1 className="mt-10 my-5 font-semibold text-3xl text-center">Profile</h1>
       <form
-        className="flex flex-col gap-4 justify-center"
+        className="flex flex-col gap-4 justify-center mb-4"
         onSubmit={handleSubmit}
       >
         <div
@@ -241,11 +252,29 @@ const DashProfile: React.FC = () => {
           gradientDuoTone="purpleToPink"
           type="submit"
           outline
-          disabled={isLoading}
+          disabled={isLoading || imageFileUploading}
         >
-          Update
+          {isLoading || imageFileUploading ? (
+            <>
+              <Spinner size="sm" />
+              <span className="pl-3">Loading...</span>
+            </>
+          ) : (
+            "Update"
+          )}
         </Button>
       </form>
+      {currentUser?.isAdmin && (
+        <Link to="/create-post">
+          <Button
+            gradientDuoTone="pinkToOrange"
+            type="button"
+            className="w-full"
+          >
+            Create Post
+          </Button>
+        </Link>
+      )}
       <div className="flex flex-row justify-between mt-3">
         <span
           className="cursor-pointer text-red-500"

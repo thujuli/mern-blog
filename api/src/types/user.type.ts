@@ -3,6 +3,7 @@ interface IUser {
   email: string;
   password: string;
   profilePicture: string;
+  isAdmin: boolean;
 }
 
 export type { IUser };
