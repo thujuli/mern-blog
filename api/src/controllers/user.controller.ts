@@ -11,16 +11,32 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
 
   const { username, email, profilePicture, password }: UserRequest = req.body;
   const updateFields: UserResponse = {};
-
   if (profilePicture) {
     updateFields.profilePicture = profilePicture;
   }
 
   if (email) {
+    const userUsernameExists = await User.findOne({ username });
+    const userEmailExists = await User.findOne({ email });
+    if (
+      userEmailExists.email &&
+      userUsernameExists._id.toString() !== res.locals.user.id
+    ) {
+      return next(errorHandler(400, "Email already exists"));
+    }
+
     updateFields.email = email;
   }
 
   if (username) {
+    const userUsernameExists = await User.findOne({ username });
+    if (
+      userUsernameExists.username &&
+      userUsernameExists._id.toString() !== res.locals.user.id
+    ) {
+      return next(errorHandler(400, "Username already exists"));
+    }
+
     if (username.length < 5) {
       return next(errorHandler(400, "Username must be at least 5 characters"));
     }
@@ -56,7 +72,8 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
     const { password: pass, ...rest } = userUpdate.toObject();
     res.status(200).json(rest);
   } catch (error) {
-    next(error);
+    console.error("User update error:", error);
+    next(errorHandler(500, "Internal server error"));
   }
 };
 
@@ -69,7 +86,7 @@ const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
     await User.findByIdAndDelete(req.params.userId);
     res.status(200).json({ message: "User has been deleted" });
   } catch (error) {
-    console.error("User update error:", error);
+    console.error("User destroy error:", error);
     next(errorHandler(500, "Internal server error"));
   }
 };

@@ -56,17 +56,14 @@ interface UseSelector {
 const DashProfile: React.FC = () => {
   const { currentUser, isLoading, errMsg, successMsg }: UseSelector =
     useSelector((state: RootState) => state.auth);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageFileUrl, setImageFileUrl] = useState<string | null>(null);
-  const [imageFileUploading, setImageFileUploading] = useState(false);
-  const [imageFileUploadProgress, setImageFileUploadProgress] = useState<
-    number | null
-  >(null);
-  const [imageFileUploadError, setImageFileUploadError] = useState<
-    string | null
-  >(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState("");
+  const [fileUploading, setFileUploading] = useState(false);
+  const [fileUploadProgress, setFileUploadProgress] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState(initialState);
+  const [warnMsg, setWarnMsg] = useState("");
   const filePickerRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -76,33 +73,33 @@ const DashProfile: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (imageFile) {
+    if (file) {
       const uploadImage = async () => {
         const storage = getStorage(app);
-        const fileName = new Date().getTime() + imageFile!.name;
+        const fileName = `/users/${new Date().getTime()}-${file.name}`;
         const storageRef = ref(storage, fileName);
-        const uploadTask = uploadBytesResumable(storageRef, imageFile!);
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
         uploadTask.on(
           "state_changed",
           (snapshot) => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setImageFileUploadProgress(Number(progress.toFixed(0)));
-            setImageFileUploading(true);
+            setFileUploadProgress(Number(progress.toFixed(0)));
+            setFileUploading(true);
           },
           () => {
-            setImageFileUploadError(
+            setFileUploadError(
               `Could not upload image (File must be less than 2MB)`
             );
-            setImageFileUploadProgress(0);
-            setImageFileUploading(false);
+            setFileUploadProgress(0);
+            setFileUploading(false);
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              setImageFileUrl(downloadURL);
-              setImageFileUploadError(null);
-              setImageFileUploading(false);
+              setFileUrl(downloadURL);
+              setFileUploadError("");
+              setFileUploading(false);
               setFormData({ ...formData, profilePicture: downloadURL });
             });
           }
@@ -111,13 +108,15 @@ const DashProfile: React.FC = () => {
       uploadImage();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageFile]);
+  }, [file]);
 
-  const handleImageChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     const selectedFiles = e.target.files;
     if (selectedFiles && selectedFiles.length > 0) {
-      setImageFile(selectedFiles[0]);
-      setImageFileUrl(URL.createObjectURL(selectedFiles[0]));
+      setFile(selectedFiles[0]);
+      setFileUrl(URL.createObjectURL(selectedFiles[0]));
     }
   };
 
@@ -128,17 +127,34 @@ const DashProfile: React.FC = () => {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    try {
-      dispatch(userUpdateStart());
-      const res: UserResponse = await userUpdate(currentUser!._id, formData);
-      dispatch(
-        userUpdateSuccess({ message: "User updated successfully", user: res })
+    let formDataHasValue = false;
+    Object.values(formData).forEach((value: string) => {
+      if (value.length > 0) {
+        formDataHasValue = true;
+      }
+    });
+    if (!formDataHasValue) {
+      dispatch(userReset());
+      return setWarnMsg(
+        "Please ensure you've entered your updated profile details before saving."
       );
-      setImageFileUploadProgress(0);
-    } catch (error) {
-      handleDispatchError(error, dispatch, userUpdateFailure);
-    } finally {
-      setFormData(initialState);
+    }
+
+    if (currentUser) {
+      try {
+        dispatch(userUpdateStart());
+        setWarnMsg("");
+        const res: UserResponse = await userUpdate(currentUser._id, formData);
+        dispatch(
+          userUpdateSuccess({ message: "User updated successfully", user: res })
+        );
+        setFileUploadProgress(0);
+      } catch (error) {
+        setWarnMsg("");
+        handleDispatchError(error, dispatch, userUpdateFailure);
+      } finally {
+        setFormData(initialState);
+      }
     }
   };
 
@@ -178,13 +194,13 @@ const DashProfile: React.FC = () => {
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageChange}
+            onChange={handleFileSelected}
             ref={filePickerRef}
             className="hidden"
           />
-          {imageFileUploadProgress ? (
+          {fileUploadProgress ? (
             <CircularProgressbar
-              value={imageFileUploadProgress || 0}
+              value={fileUploadProgress || 0}
               strokeWidth={5}
               className="w-full h-full absolute top-0 left-0"
             />
@@ -192,14 +208,14 @@ const DashProfile: React.FC = () => {
             ""
           )}
           <img
-            src={imageFileUrl || currentUser?.profilePicture}
+            src={fileUrl || currentUser?.profilePicture}
             alt="Profile Picture"
             className="w-full h-full object-cover rounded-full border-4"
           />
         </div>
-        {imageFileUploadError && (
+        {fileUploadError && (
           <Alert color="failure" icon={HiInformationCircle}>
-            <span className="font-medium">{imageFileUploadError}</span>
+            <span className="font-medium">{fileUploadError}</span>
           </Alert>
         )}
         <div>
@@ -252,9 +268,9 @@ const DashProfile: React.FC = () => {
           gradientDuoTone="purpleToPink"
           type="submit"
           outline
-          disabled={isLoading || imageFileUploading}
+          disabled={isLoading || fileUploading}
         >
-          {isLoading || imageFileUploading ? (
+          {isLoading || fileUploading ? (
             <>
               <Spinner size="sm" />
               <span className="pl-3">Loading...</span>
@@ -286,6 +302,11 @@ const DashProfile: React.FC = () => {
           Logout
         </span>
       </div>
+      {warnMsg && (
+        <Alert color="warning" icon={HiInformationCircle} className="mt-5">
+          <span className="font-medium">{warnMsg}</span>
+        </Alert>
+      )}
       {errMsg && (
         <Alert color="failure" icon={HiInformationCircle} className="mt-5">
           <span className="font-medium">{errMsg}</span>
