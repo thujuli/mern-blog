@@ -13,11 +13,11 @@ interface UserRequest {
   password: string | null;
 }
 
-interface UserResponse {
+interface UserFields {
   username?: string;
   email?: string;
   profilePicture?: string;
   password?: string;
 }
 
-export type { IUser, UserResponse, UserRequest };
+export type { IUser, UserFields, UserRequest };
