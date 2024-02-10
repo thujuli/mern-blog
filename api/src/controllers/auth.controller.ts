@@ -45,7 +45,7 @@ const registrationStore = async (
   const newUser = new User({ username, email, password: hashedPassword });
   try {
     await newUser.save();
-    res.json(newUser);
+    res.status(201).json(newUser);
   } catch (error) {
     next(error);
   }
@@ -117,6 +117,7 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
       const { password: pass, ...rest } = user.toObject();
 
       res
+        .status(201)
         .cookie("access_token", token, {
           httpOnly: true,
         })

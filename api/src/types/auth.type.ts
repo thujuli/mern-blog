@@ -1,18 +1,18 @@
 interface AuthRegistration {
-  username: string;
-  email: string;
-  password: string;
+  username: string | null;
+  email: string | null;
+  password: string | null;
 }
 
 interface AuthLogin {
-  email: string;
-  password: string;
+  email: string | null;
+  password: string | null;
 }
 
 interface AuthGoogle {
-  displayName: string;
-  email: string;
-  photoURL: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
 }
 
 export type { AuthGoogle, AuthLogin, AuthRegistration };

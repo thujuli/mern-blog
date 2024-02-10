@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import authRoute from "./routes/auth.route";
 import userRoute from "./routes/user.route";
+import postRoute from "./routes/post.route";
 import errorMiddleware from "./middlewares/error.middleware";
 
 mongoose
@@ -29,5 +30,6 @@ app.listen(process.env.PORT, () =>
 
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
 
 app.use(errorMiddleware);

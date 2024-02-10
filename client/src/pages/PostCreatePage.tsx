@@ -12,7 +12,7 @@ const CreatePost: React.FC = () => {
         <form className="flex flex-col gap-4 mt-5">
           <div className="flex flex-col gap-4 sm:flex-row">
             <TextInput placeholder="Title" required className="grow" />
-            <Select id="catgoris" required className="grow-0">
+            <Select id="catgories" required className="grow-0">
               <option value="uncategorized">Select a category</option>
               <option value="javascript">Javascript</option>
               <option value="react">React</option>

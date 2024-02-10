@@ -14,7 +14,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import ThemeProvider from "./components/ThemeProvider.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
-import CreatePost from "./pages/CreatePost.tsx";
+import PostCreatePage from "./pages/PostCreatePage.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -24,8 +24,8 @@ const router = createBrowserRouter([
     element: <PrivateRoute component={<DashboardPage />} />,
   },
   {
-    path: "/create-post",
-    element: <AdminRoute component={<CreatePost />} />,
+    path: "/posts/create",
+    element: <AdminRoute component={<PostCreatePage />} />,
   },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegistrationPage /> },
