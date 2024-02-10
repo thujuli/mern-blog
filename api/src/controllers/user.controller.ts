@@ -69,7 +69,8 @@ const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
     await User.findByIdAndDelete(req.params.userId);
     res.status(200).json({ message: "User has been deleted" });
   } catch (error) {
-    next(error);
+    console.error("User update error:", error);
+    next(errorHandler(500, "Internal server error"));
   }
 };
 

@@ -27,17 +27,8 @@ const postCreate = async (req: Request, res: Response, next: NextFunction) => {
     await newPost.save();
     res.status(201).json(newPost);
   } catch (error) {
-    console.log(error);
-    // if (error.name === "MongoServerError" && error.code === 11000) {
-    //   next(
-    //     errorHandler(
-    //       400,
-    //       `Title '${title}' already exists. Please choose a different title.`
-    //     )
-    //   );
-    // } else {
-    //   next(error);
-    // }
+    console.error(error);
+    next(errorHandler(500, "Internal server error"));
   }
 };
 

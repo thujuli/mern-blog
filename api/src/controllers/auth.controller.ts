@@ -23,6 +23,16 @@ const registrationStore = async (
     return next(errorHandler(400, "All fields are required"));
   }
 
+  const userUsernameExists = await User.findOne({ username });
+  if (userUsernameExists) {
+    return next(errorHandler(400, "Username already exists"));
+  }
+
+  const userEmailExists = await User.findOne({ email });
+  if (userEmailExists) {
+    return next(errorHandler(400, "Email already exists"));
+  }
+
   if (username.length < 5) {
     return next(errorHandler(400, "Username must be at least 5 characters"));
   }
@@ -47,7 +57,8 @@ const registrationStore = async (
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
-    next(error);
+    console.error("Registration error:", error);
+    next(errorHandler(500, "Internal server error"));
   }
 };
 
@@ -77,7 +88,8 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
 
     res.cookie("access_token", token, { httpOnly: true }).json(rest);
   } catch (error) {
-    next(error);
+    console.error("Login error:", error);
+    next(errorHandler(500, "Internal server error"));
   }
 };
 
@@ -124,7 +136,8 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
         .json(rest);
     }
   } catch (error) {
-    next(error);
+    console.error("Google registration error:", error);
+    next(errorHandler(500, "Internal server error"));
   }
 };
 
