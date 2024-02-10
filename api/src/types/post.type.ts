@@ -14,4 +14,11 @@ interface PostRequest {
   content: string | null;
 }
 
-export type { IPost, PostRequest };
+interface PostFields {
+  title?: string;
+  categories?: string;
+  postImage?: string;
+  content?: string;
+}
+
+export type { IPost, PostRequest, PostFields };

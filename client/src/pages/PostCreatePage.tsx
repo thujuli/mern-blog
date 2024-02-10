@@ -19,12 +19,21 @@ import {
 } from "firebase/storage";
 import app from "../utils/firebase";
 import { HiInformationCircle } from "react-icons/hi";
+import { PostForm, PostResponse } from "../types/postType";
+import { postCreate } from "../api/postApi";
+import axios, { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
-const initialState = {
+const initialState: PostForm = {
   title: "",
+  content: "",
   categories: "",
   postImage: "",
-  content: "",
+};
+
+const status = {
+  isLoading: false,
+  errorMsg: "",
 };
 
 const CreatePost: React.FC = () => {
@@ -34,6 +43,9 @@ const CreatePost: React.FC = () => {
   const [fileUploadError, setFileUploadError] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [formData, setFormData] = useState(initialState);
+  const [publishStatus, setPublishStatus] = useState(status);
+  const navigate = useNavigate();
+
   const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = (
     e
   ) => {
@@ -87,19 +99,59 @@ const CreatePost: React.FC = () => {
       setFileUploading(false);
     }
   };
+
+  const handleChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement
+  > = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    try {
+      setPublishStatus({ errorMsg: "", isLoading: true });
+      const newPost: PostResponse = await postCreate(formData);
+      navigate(`/posts/${newPost.slug}`);
+    } catch (error) {
+      const err = error as AxiosError | Error;
+      if (axios.isAxiosError(err)) {
+        console.error("Post create error:", err.response?.data.message);
+        setPublishStatus({
+          errorMsg: err.response?.data.message,
+          isLoading: false,
+        });
+      } else {
+        console.error("Post create error:", err.message);
+        setPublishStatus({
+          errorMsg: err.message,
+          isLoading: false,
+        });
+      }
+    }
+  };
   return (
     <MainLayout>
       <div className="p-3 my-20 max-w-2xl mx-auto">
         <h1 className="text-center text-3xl font-semibold">Create Post</h1>
-        <form className="flex flex-col gap-4 mt-5">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-5">
           <div className="flex flex-col gap-4 sm:flex-row">
             <TextInput
               id="title"
               placeholder="Title"
+              defaultValue={formData.title}
+              onChange={handleChange}
+              disabled={publishStatus.isLoading}
               required
               className="grow"
             />
-            <Select id="catgories" required className="grow-0">
+            <Select
+              id="catgories"
+              onChange={handleChange}
+              disabled={publishStatus.isLoading}
+              required
+              className="grow-0"
+            >
               <option value="uncategorized">Select a category</option>
               <option value="javascript">Javascript</option>
               <option value="react">React</option>
@@ -110,6 +162,7 @@ const CreatePost: React.FC = () => {
             <FileInput
               accept="image/*"
               onChange={handleFileSelected}
+              disabled={publishStatus.isLoading}
               className="flex-1 w-full"
             />
             <Button
@@ -117,10 +170,10 @@ const CreatePost: React.FC = () => {
               gradientDuoTone="purpleToPink"
               outline
               onClick={handleFileUpload}
-              disabled={fileUploading}
+              disabled={fileUploading || publishStatus.isLoading}
               className="flex-0 w-full sm:w-fit"
             >
-              {fileUploading ? (
+              {fileUploading || publishStatus.isLoading ? (
                 <>
                   <Spinner size="sm" />
                   <span className="pl-3">Loading...</span>
@@ -151,15 +204,35 @@ const CreatePost: React.FC = () => {
               className="h-72 w-full object-cover"
             />
           )}
-          <ReactQuill theme="snow" className="h-72" />
+          <ReactQuill
+            theme="snow"
+            readOnly={publishStatus.isLoading}
+            onChange={(value) => {
+              setFormData({ ...formData, content: value });
+            }}
+            className="h-72"
+          />
           <Button
             type="submit"
             gradientDuoTone="purpleToPink"
+            disabled={publishStatus.isLoading}
             className="mt-12"
           >
-            Submit
+            {publishStatus.isLoading ? (
+              <>
+                <Spinner size="sm" />
+                <span className="pl-3">Loading...</span>
+              </>
+            ) : (
+              "Publish"
+            )}
           </Button>
         </form>
+        {publishStatus.errorMsg && (
+          <Alert color="failure" icon={HiInformationCircle} className="mt-5">
+            <span className="font-medium">{publishStatus.errorMsg}</span>
+          </Alert>
+        )}
       </div>
     </MainLayout>
   );
