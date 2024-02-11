@@ -12,7 +12,7 @@ const PostSchema = new mongoose.Schema<IPost>(
       required: true,
       unique: true,
     },
-    categories: {
+    category: {
       type: String,
       default: "uncategorized",
     },
@@ -20,7 +20,7 @@ const PostSchema = new mongoose.Schema<IPost>(
       type: String,
       required: true,
     },
-    postImage: {
+    imageUrl: {
       type: String,
       default:
         "https://www.surgesonelectric.com/wp-content/themes/azoomtheme/images/demo/demo-image-default.jpg",

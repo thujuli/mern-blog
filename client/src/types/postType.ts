@@ -1,16 +1,16 @@
 interface PostForm {
   title: string;
   content: string;
-  categories?: string;
-  postImage?: string;
+  category?: string;
+  imageUrl?: string;
 }
 
 interface PostResponse {
   userId: string;
   title: string;
-  categories: string;
+  category: string;
   content: string;
-  postImage: string;
+  imageUrl: string;
   slug: string;
   _id: string;
   createdAt: string;
