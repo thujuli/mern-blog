@@ -5,7 +5,7 @@ interface PostForm {
   imageUrl?: string;
 }
 
-interface PostResponse {
+interface PostData {
   userId: string;
   title: string;
   category: string;
@@ -18,4 +18,10 @@ interface PostResponse {
   __v: number;
 }
 
-export type { PostForm, PostResponse };
+interface PostsResponse {
+  posts: PostData[];
+  totalLastMonthPosts: number;
+  totalPosts: number;
+}
+
+export type { PostForm, PostData, PostsResponse };
