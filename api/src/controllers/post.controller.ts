@@ -75,7 +75,7 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
         ],
       }),
     })
-      .sort({ updateAt: sort })
+      .sort({ updatedAt: sort })
       .skip(skip)
       .limit(limit);
 

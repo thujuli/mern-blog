@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { PostForm } from "../types/postType";
+import { PostForm, PostParams } from "../types/postType";
 
 const config: AxiosRequestConfig = {
   withCredentials: true,
@@ -14,9 +14,12 @@ const postCreate = async (data: PostForm) => {
   return res.data;
 };
 
-const postIndex = async (paramUserId: string) => {
+const postIndex = async (params: PostParams) => {
+  const queryParams = new URLSearchParams(
+    params as Record<string, string>
+  ).toString();
   const res = await axios.get(
-    `${import.meta.env.VITE_API_BASE_URL}/posts?userId=${paramUserId}`
+    `${import.meta.env.VITE_API_BASE_URL}/posts?${queryParams}`
   );
   return res.data;
 };
