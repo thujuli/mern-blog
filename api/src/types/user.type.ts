@@ -1,9 +1,13 @@
-interface IUser {
+import { Document } from "mongoose";
+
+interface IUser extends Document {
   username: string;
   email: string;
   password: string;
   profilePicture: string;
   isAdmin: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface UserRequest {

@@ -27,8 +27,8 @@ import { useNavigate } from "react-router-dom";
 const initialState: PostForm = {
   title: "",
   content: "",
-  categories: "",
-  postImage: "",
+  category: "",
+  imageUrl: "",
 };
 
 const status = {
@@ -85,7 +85,7 @@ const CreatePost: React.FC = () => {
               setFileUrl(downloadURL);
               setFileUploadError("");
               setFileUploading(false);
-              setFormData({ ...formData, postImage: downloadURL });
+              setFormData({ ...formData, imageUrl: downloadURL });
             });
           }
         );
@@ -146,7 +146,7 @@ const CreatePost: React.FC = () => {
               className="grow"
             />
             <Select
-              id="catgories"
+              id="category"
               onChange={handleChange}
               disabled={publishStatus.isLoading}
               required
