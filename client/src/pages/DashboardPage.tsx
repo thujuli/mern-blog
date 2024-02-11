@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
+import DashPosts from "../components/DashPosts";
 
 const DashboardPage: React.FC = () => {
   const location = useLocation();
@@ -24,6 +25,8 @@ const DashboardPage: React.FC = () => {
         </div>
         {/* profile */}
         {tab === "profile" && <DashProfile />}
+        {/* posts */}
+        {tab === "posts" && <DashPosts />}
       </div>
     </MainLayout>
   );
