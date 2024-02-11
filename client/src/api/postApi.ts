@@ -14,4 +14,11 @@ const postCreate = async (data: PostForm) => {
   return res.data;
 };
 
-export { postCreate };
+const postIndex = async (paramUserId: string) => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/posts?userId=${paramUserId}`
+  );
+  return res.data;
+};
+
+export { postCreate, postIndex };
