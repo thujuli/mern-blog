@@ -24,4 +24,15 @@ interface PostsResponse {
   totalPosts: number;
 }
 
-export type { PostForm, PostData, PostsResponse };
+interface PostParams {
+  userId?: string;
+  category?: string;
+  slug?: string;
+  postId?: string;
+  searchTerm?: string;
+  skip?: number;
+  limit?: number;
+  sort?: number;
+}
+
+export type { PostForm, PostData, PostsResponse, PostParams };

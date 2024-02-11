@@ -8,16 +8,20 @@ import { RootState } from "../redux/store";
 import { Link } from "react-router-dom";
 
 const DashPosts: React.FC = () => {
-  const [userPosts, setUserPosts] = useState<PostData[]>([]);
   const { currentUser }: { currentUser: CurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
+  const [userPosts, setUserPosts] = useState<PostData[]>([]);
+  const [isShowMore, setIsShowMore] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (currentUser) {
-          const res: PostsResponse = await postIndex(currentUser._id);
+          const res: PostsResponse = await postIndex({
+            userId: currentUser._id,
+          });
           setUserPosts(res.posts);
+          setIsShowMore(res.totalPosts > 9 ? true : false);
         }
       } catch (error) {
         console.log(error);
@@ -25,6 +29,25 @@ const DashPosts: React.FC = () => {
     };
     fetchData();
   }, [currentUser]);
+
+  const handleShowMore: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async () => {
+    if (currentUser) {
+      setIsShowMore(false);
+      try {
+        const res: PostsResponse = await postIndex({
+          userId: currentUser._id,
+          skip: userPosts.length,
+        });
+
+        setUserPosts((prev) => [...prev, ...res.posts]);
+        res.posts.length <= 9 ? setIsShowMore(false) : setIsShowMore(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   return (
     <div className="overflow-x-auto mx-auto p-4">
       {currentUser?.isAdmin && userPosts.length > 0 && (
@@ -77,6 +100,14 @@ const DashPosts: React.FC = () => {
             ))}
           </Table.Body>
         </Table>
+      )}
+      {isShowMore && (
+        <button
+          onClick={handleShowMore}
+          className="w-full rounded-xl mt-3 p-2 text-blue-700 dark:text-blue-600 font-medium hover:ring hover:ring-2"
+        >
+          Show more
+        </button>
       )}
     </div>
   );
