@@ -98,4 +98,30 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { postCreate, postIndex };
+const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!res.locals.user.isAdmin || post.userId != res.locals.user.id) {
+      return next(
+        createCustomError(403, "You are not allowed to delete this post")
+      );
+    }
+  } catch (error) {
+    if (error.name === "CastError") {
+      return next(createCustomError(404, "Resource not found"));
+    } else {
+      console.error("Post destroy error:", error);
+      return next(createCustomError(500, "Internal server error"));
+    }
+  }
+
+  try {
+    await Post.findByIdAndDelete(req.params.postId);
+    res.json({ message: "Post has been deleted" });
+  } catch (error) {
+    console.error("Post destroy error:", error);
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export { postCreate, postIndex, postDestroy };

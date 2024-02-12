@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { postIndex } from "../api/postApi";
+import { postDestroy, postIndex } from "../api/postApi";
 import { PostData, PostsResponse } from "../types/postType";
-import { Table } from "flowbite-react";
+import { Button, Modal, Table } from "flowbite-react";
 import { useSelector } from "react-redux";
 import { CurrentUser } from "../types/authType";
 import { RootState } from "../redux/store";
 import { Link } from "react-router-dom";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const DashPosts: React.FC = () => {
   const { currentUser }: { currentUser: CurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
   const [userPosts, setUserPosts] = useState<PostData[]>([]);
-  const [isShowMore, setIsShowMore] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [postId, setPostId] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -21,7 +25,7 @@ const DashPosts: React.FC = () => {
             userId: currentUser._id,
           });
           setUserPosts(res.posts);
-          setIsShowMore(res.totalPosts > 9 ? true : false);
+          setShowMore(res.totalPosts > 9 ? true : false);
         }
       } catch (error) {
         console.log(error);
@@ -34,7 +38,7 @@ const DashPosts: React.FC = () => {
     HTMLButtonElement
   > = async () => {
     if (currentUser) {
-      setIsShowMore(false);
+      setShowMore(false);
       try {
         const res: PostsResponse = await postIndex({
           userId: currentUser._id,
@@ -42,7 +46,21 @@ const DashPosts: React.FC = () => {
         });
 
         setUserPosts((prev) => [...prev, ...res.posts]);
-        res.posts.length <= 9 ? setIsShowMore(false) : setIsShowMore(true);
+        res.posts.length <= 9 ? setShowMore(false) : setShowMore(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handlePostDestroy: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async () => {
+    setShowModal(false);
+    if (currentUser) {
+      try {
+        await postDestroy(postId);
+        setUserPosts((prev) => prev.filter((post) => post._id !== postId));
       } catch (error) {
         console.log(error);
       }
@@ -92,7 +110,13 @@ const DashPosts: React.FC = () => {
                   </span>
                 </Table.Cell>
                 <Table.Cell>
-                  <span className="font-medium text-red-600 hover:underline hover:cursor-pointer dark:text-red-500">
+                  <span
+                    onClick={() => {
+                      setShowModal(true);
+                      setPostId(post._id);
+                    }}
+                    className="font-medium text-red-600 hover:underline hover:cursor-pointer dark:text-red-500"
+                  >
                     Delete
                   </span>
                 </Table.Cell>
@@ -101,7 +125,7 @@ const DashPosts: React.FC = () => {
           </Table.Body>
         </Table>
       )}
-      {isShowMore && (
+      {showMore && (
         <button
           onClick={handleShowMore}
           className="w-full rounded-xl mt-3 p-2 text-blue-700 dark:text-blue-600 font-medium hover:ring hover:ring-2"
@@ -109,6 +133,30 @@ const DashPosts: React.FC = () => {
           Show more
         </button>
       )}
+      <Modal
+        show={showModal}
+        size="md"
+        onClose={() => setShowModal(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this post?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handlePostDestroy}>
+                Yes, I'm sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

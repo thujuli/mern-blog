@@ -76,7 +76,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
       { new: true }
     );
     const { password: pass, ...rest } = userUpdate.toObject();
-    res.status(200).json(rest);
+    res.json(rest);
   } catch (error) {
     console.error("User update error:", error);
     next(createCustomError(500, "Internal server error"));
@@ -92,7 +92,7 @@ const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     await User.findByIdAndDelete(req.params.userId);
-    res.status(200).json({ message: "User has been deleted" });
+    res.json({ message: "User has been deleted" });
   } catch (error) {
     console.error("User destroy error:", error);
     next(createCustomError(500, "Internal server error"));
