@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user.model";
 import bcryptjs from "bcryptjs";
-import errorHandler from "../utils/error";
+import createCustomError from "../utils/error";
 import jwt from "jsonwebtoken";
 import { AuthGoogle, AuthLogin, AuthRegistration } from "auth.type";
 
-const registrationStore = async (
+const registration = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -20,34 +20,38 @@ const registrationStore = async (
     email === "" ||
     password === ""
   ) {
-    return next(errorHandler(400, "All fields are required"));
+    return next(createCustomError(400, "All fields are required"));
   }
 
   const userUsernameExists = await User.findOne({ username });
   if (userUsernameExists) {
-    return next(errorHandler(400, "Username already exists"));
+    return next(createCustomError(400, "Username already exists"));
   }
 
   const userEmailExists = await User.findOne({ email });
   if (userEmailExists) {
-    return next(errorHandler(400, "Email already exists"));
+    return next(createCustomError(400, "Email already exists"));
   }
 
   if (username.length < 5) {
-    return next(errorHandler(400, "Username must be at least 5 characters"));
+    return next(
+      createCustomError(400, "Username must be at least 5 characters")
+    );
   }
   if (password.length < 6) {
-    return next(errorHandler(400, "Password must be at least 6 characters"));
+    return next(
+      createCustomError(400, "Password must be at least 6 characters")
+    );
   }
   if (username.includes(" ")) {
-    return next(errorHandler(400, "Username cannot contain spaces"));
+    return next(createCustomError(400, "Username cannot contain spaces"));
   }
   if (username !== username.toLocaleLowerCase()) {
-    return next(errorHandler(400, "Username must be lowercase"));
+    return next(createCustomError(400, "Username must be lowercase"));
   }
   if (!username.match(/^[A-Za-z0-9]*$/)) {
     return next(
-      errorHandler(400, "Username can only contain letters and numbers")
+      createCustomError(400, "Username can only contain letters and numbers")
     );
   }
 
@@ -58,26 +62,26 @@ const registrationStore = async (
     res.status(201).json(newUser);
   } catch (error) {
     console.error("Registration error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 
-const loginStore = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password }: AuthLogin = req.body;
 
   if (!email || !password || email === "" || password === "") {
-    return next(errorHandler(400, "All fields are required"));
+    return next(createCustomError(400, "All fields are required"));
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      throw errorHandler(400, "Invalid Credentials");
+      throw createCustomError(400, "Invalid Credentials");
     }
 
     const isValidUser = bcryptjs.compareSync(password, user.password);
     if (!isValidUser) {
-      throw errorHandler(400, "Invalid Credentials");
+      throw createCustomError(400, "Invalid Credentials");
     }
 
     const token = jwt.sign(
@@ -86,14 +90,14 @@ const loginStore = async (req: Request, res: Response, next: NextFunction) => {
     );
     const { password: pass, ...rest } = user.toObject();
 
-    res.cookie("access_token", token, { httpOnly: true }).json(rest);
+    res.cookie("token", token, { httpOnly: true }).json(rest);
   } catch (error) {
     console.error("Login error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 
-const googleStore = async (req: Request, res: Response, next: NextFunction) => {
+const google = async (req: Request, res: Response, next: NextFunction) => {
   const { displayName, email, photoURL }: AuthGoogle = req.body;
 
   try {
@@ -106,7 +110,7 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
       const { password, ...rest } = user.toObject();
 
       res
-        .cookie("access_token", token, {
+        .cookie("token", token, {
           httpOnly: true,
         })
         .json(rest);
@@ -130,21 +134,19 @@ const googleStore = async (req: Request, res: Response, next: NextFunction) => {
 
       res
         .status(201)
-        .cookie("access_token", token, {
+        .cookie("token", token, {
           httpOnly: true,
         })
         .json(rest);
     }
   } catch (error) {
     console.error("Google registration error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 
-const logoutDestroy = (req: Request, res: Response) => {
-  res
-    .clearCookie("access_token")
-    .json({ message: "User has successfully logout" });
+const logout = (req: Request, res: Response) => {
+  res.clearCookie("token").json({ message: "User has successfully logout" });
 };
 
-export { registrationStore, loginStore, googleStore, logoutDestroy };
+export { google, login, logout, registration };

@@ -1,22 +1,22 @@
 import { NextFunction, Request, Response } from "express";
-import errorHandler from "../utils/error";
+import createCustomError from "../utils/error";
 import { PostRequest, PostFields } from "post.type";
 import Post from "../models/post.model";
 
 const postCreate = async (req: Request, res: Response, next: NextFunction) => {
   if (!res.locals.user.isAdmin) {
-    return next(errorHandler(403, "You are not allowed to create a post"));
+    return next(createCustomError(403, "You are not allowed to create a post"));
   }
 
   const { title, content, category, imageUrl }: PostRequest = req.body;
   const postFields: PostFields = {};
   if (!title || !content) {
-    return next(errorHandler(400, "Please provide all required fields"));
+    return next(createCustomError(400, "Please provide all required fields"));
   }
 
   const postTitleExists = await Post.findOne({ title });
   if (postTitleExists) {
-    return next(errorHandler(400, "Title already exists"));
+    return next(createCustomError(400, "Title already exists"));
   }
 
   const slug = title
@@ -26,7 +26,7 @@ const postCreate = async (req: Request, res: Response, next: NextFunction) => {
   const postSlugExists = await Post.findOne({ slug });
   if (postSlugExists) {
     return next(
-      errorHandler(
+      createCustomError(
         400,
         "Duplicate Slug Detected: Please Modify the 'Title' to Generate a Unique Slug"
       )
@@ -54,7 +54,7 @@ const postCreate = async (req: Request, res: Response, next: NextFunction) => {
     res.status(201).json(newPost);
   } catch (error) {
     console.error("Post create error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 
@@ -94,7 +94,7 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
     res.json({ posts, totalPosts, totalLastMothPosts });
   } catch (error) {
     console.error("Post index error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 

@@ -7,21 +7,14 @@ interface DecodedJwt {
   iat: number;
 }
 
-const userVerificationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { access_token } = req.cookies;
-  if (!access_token) {
+const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+  const { token } = req.cookies;
+  if (!token) {
     return next(errorHandler(401, "Unauthorized"));
   }
 
   try {
-    const decoded = jwt.verify(
-      access_token,
-      process.env.JWT_SECRET_KEY
-    ) as DecodedJwt;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY) as DecodedJwt;
     res.locals.user = decoded;
     next();
   } catch (error) {
@@ -29,4 +22,4 @@ const userVerificationMiddleware = (
   }
 };
 
-export default userVerificationMiddleware;
+export { verifyToken };

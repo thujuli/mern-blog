@@ -6,7 +6,7 @@ import "dotenv/config";
 import authRoute from "./routes/auth.route";
 import userRoute from "./routes/user.route";
 import postRoute from "./routes/post.route";
-import errorMiddleware from "./middlewares/error.middleware";
+import { errorHandler } from "./middlewares/error.middleware";
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -32,4 +32,4 @@ app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 
-app.use(errorMiddleware);
+app.use(errorHandler);
