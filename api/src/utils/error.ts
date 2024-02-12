@@ -6,8 +6,8 @@ class CustomError extends Error {
   }
 }
 
-const errorHandler = (statusCode: number, message: string): Error => {
+const createCustomError = (statusCode: number, message: string): Error => {
   return new CustomError(message, statusCode);
 };
 
-export default errorHandler;
+export default createCustomError;

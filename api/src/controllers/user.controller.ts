@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import bcryptjs from "bcryptjs";
-import errorHandler from "../utils/error";
+import createCustomError from "../utils/error";
 import User from "../models/user.model";
 import { UserRequest, UserFields } from "user.type";
 
 const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
   if (res.locals.user.id !== req.params.userId) {
-    return next(errorHandler(403, "You are not allowed to update this user"));
+    return next(
+      createCustomError(403, "You are not allowed to update this user")
+    );
   }
 
   const { username, email, profilePicture, password }: UserRequest = req.body;
@@ -22,7 +24,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
       userEmailExists.email &&
       userUsernameExists._id.toString() !== res.locals.user.id
     ) {
-      return next(errorHandler(400, "Email already exists"));
+      return next(createCustomError(400, "Email already exists"));
     }
 
     userFields.email = email;
@@ -34,21 +36,23 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
       userUsernameExists.username &&
       userUsernameExists._id.toString() !== res.locals.user.id
     ) {
-      return next(errorHandler(400, "Username already exists"));
+      return next(createCustomError(400, "Username already exists"));
     }
 
     if (username.length < 5) {
-      return next(errorHandler(400, "Username must be at least 5 characters"));
+      return next(
+        createCustomError(400, "Username must be at least 5 characters")
+      );
     }
     if (username.includes(" ")) {
-      return next(errorHandler(400, "Username cannot contain spaces"));
+      return next(createCustomError(400, "Username cannot contain spaces"));
     }
     if (username !== username.toLocaleLowerCase()) {
-      return next(errorHandler(400, "Username must be lowercase"));
+      return next(createCustomError(400, "Username must be lowercase"));
     }
     if (!username.match(/^[A-Za-z0-9]*$/)) {
       return next(
-        errorHandler(400, "Username can only contain letters and numbers")
+        createCustomError(400, "Username can only contain letters and numbers")
       );
     }
 
@@ -57,7 +61,9 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
 
   if (password) {
     if (password.length < 6) {
-      return next(errorHandler(400, "Password must be at least 6 characters"));
+      return next(
+        createCustomError(400, "Password must be at least 6 characters")
+      );
     }
 
     userFields.password = bcryptjs.hashSync(password, 10);
@@ -73,13 +79,15 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json(rest);
   } catch (error) {
     console.error("User update error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 
 const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
   if (res.locals.user.id !== req.params.userId) {
-    return next(errorHandler(403, "You are not allowed to delete this user"));
+    return next(
+      createCustomError(403, "You are not allowed to delete this user")
+    );
   }
 
   try {
@@ -87,7 +95,7 @@ const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({ message: "User has been deleted" });
   } catch (error) {
     console.error("User destroy error:", error);
-    next(errorHandler(500, "Internal server error"));
+    next(createCustomError(500, "Internal server error"));
   }
 };
 
