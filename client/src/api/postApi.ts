@@ -24,4 +24,12 @@ const postIndex = async (params: PostParams) => {
   return res.data;
 };
 
-export { postCreate, postIndex };
+const postDestroy = async (postId: string) => {
+  const res = await axios.delete(
+    `${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`,
+    config
+  );
+  return res.data;
+};
+
+export { postCreate, postIndex, postDestroy };

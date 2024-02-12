@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import errorHandler from "../utils/error";
+import createCustomError from "../utils/error";
 
 interface DecodedJwt {
   id: string;
@@ -9,8 +9,9 @@ interface DecodedJwt {
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const { token } = req.cookies;
+
   if (!token) {
-    return next(errorHandler(401, "Unauthorized"));
+    return next(createCustomError(401, "Unauthorized"));
   }
 
   try {
