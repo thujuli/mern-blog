@@ -129,8 +129,8 @@ const google = async (req: Request, res: Response, next: NextFunction) => {
       });
       await newUser.save();
 
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
-      const { password: pass, ...rest } = user.toObject();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET_KEY);
+      const { password: pass, ...rest } = newUser.toObject();
 
       res
         .status(201)
