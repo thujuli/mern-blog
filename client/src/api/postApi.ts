@@ -32,4 +32,13 @@ const postDestroy = async (postId: string) => {
   return res.data;
 };
 
-export { postCreate, postIndex, postDestroy };
+const postUpdate = async (postId: string, data: PostForm) => {
+  const res = await axios.put(
+    `${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`,
+    data,
+    config
+  );
+  return res.data;
+};
+
+export { postCreate, postIndex, postDestroy, postUpdate };

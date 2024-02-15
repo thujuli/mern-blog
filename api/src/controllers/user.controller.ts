@@ -21,7 +21,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
     const userEmailExists = await User.findOne({ email });
     if (
       userEmailExists &&
-      userEmailExists.email &&
+      userEmailExists.email === email &&
       userEmailExists._id.toString() !== res.locals.user.id
     ) {
       return next(createCustomError(400, "Email already exists"));
@@ -35,7 +35,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
 
     if (
       userUsernameExists &&
-      userUsernameExists.username &&
+      userUsernameExists.username === username &&
       userUsernameExists._id.toString() !== res.locals.user.id
     ) {
       return next(createCustomError(400, "Username already exists"));

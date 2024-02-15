@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import {
   Alert,
@@ -19,10 +19,10 @@ import {
 } from "firebase/storage";
 import app from "../utils/firebase";
 import { HiInformationCircle } from "react-icons/hi";
-import { PostForm, PostData } from "../types/postType";
-import { postCreate } from "../api/postApi";
+import { PostForm, PostData, PostsResponse } from "../types/postType";
+import { postIndex, postUpdate } from "../api/postApi";
 import axios, { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const initialState: PostForm = {
   title: "",
@@ -36,15 +36,33 @@ const status = {
   errorMsg: "",
 };
 
-const PostCreatePage: React.FC = () => {
+const PostEditPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
   const [fileUploading, setFileUploading] = useState(false);
   const [fileUploadError, setFileUploadError] = useState("");
-  const [fileUrl, setFileUrl] = useState("");
+  // const [fileUrl, setFileUrl] = useState("");
   const [formData, setFormData] = useState(initialState);
-  const [publishStatus, setPublishStatus] = useState(status);
+  const [updateStatus, setUpdateStatus] = useState(status);
+  const [quill, setQuill] = useState("");
   const navigate = useNavigate();
+  const { postId } = useParams();
+
+  useEffect(() => {
+    if (postId) {
+      const fetchData = async () => {
+        try {
+          const res: PostsResponse = await postIndex({ postId });
+          setFormData(res.posts[0]);
+          setQuill(res.posts[0].content);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [postId]);
 
   const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = (
     e
@@ -78,11 +96,11 @@ const PostCreatePage: React.FC = () => {
             );
             setFileUploadProgress(0);
             setFileUploading(false);
-            setFileUrl("");
+            // setFileUrl("");
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              setFileUrl(downloadURL);
+              // setFileUrl(downloadURL);
               setFileUploadError("");
               setFileUploading(false);
               setFormData({ ...formData, imageUrl: downloadURL });
@@ -106,49 +124,59 @@ const PostCreatePage: React.FC = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleChangeQuill = (event: string) => {
+    setQuill(event);
+  };
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    try {
-      setPublishStatus({ errorMsg: "", isLoading: true });
-      const newPost: PostData = await postCreate(formData);
-      navigate(`/posts/${newPost.slug}`);
-    } catch (error) {
-      const err = error as AxiosError | Error;
-      if (axios.isAxiosError(err)) {
-        console.error("Post create error:", err.response?.data.message);
-        setPublishStatus({
-          errorMsg: err.response?.data.message,
-          isLoading: false,
+    if (postId) {
+      try {
+        setUpdateStatus({ errorMsg: "", isLoading: true });
+        const updatedPost: PostData = await postUpdate(postId, {
+          ...formData,
+          content: quill,
         });
-      } else {
-        console.error("Post create error:", err.message);
-        setPublishStatus({
-          errorMsg: err.message,
-          isLoading: false,
-        });
+        navigate(`/posts/${updatedPost.slug}`);
+      } catch (error) {
+        const err = error as AxiosError | Error;
+        if (axios.isAxiosError(err)) {
+          console.error("Post create error:", err.response?.data.message);
+          setUpdateStatus({
+            errorMsg: err.response?.data.message,
+            isLoading: false,
+          });
+        } else {
+          console.error("Post create error:", err.message);
+          setUpdateStatus({
+            errorMsg: err.message,
+            isLoading: false,
+          });
+        }
       }
     }
   };
   return (
     <MainLayout>
       <div className="p-3 my-20 max-w-2xl mx-auto">
-        <h1 className="text-center text-3xl font-semibold">Create Post</h1>
+        <h1 className="text-center text-3xl font-semibold">Update Post</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-5">
           <div className="flex flex-col gap-4 sm:flex-row">
             <TextInput
               id="title"
               placeholder="Title"
-              defaultValue={formData.title}
+              value={formData.title}
               onChange={handleChange}
-              disabled={publishStatus.isLoading}
+              disabled={updateStatus.isLoading}
               required
               className="grow"
             />
             <Select
               id="category"
+              value={formData.category}
               onChange={handleChange}
-              disabled={publishStatus.isLoading}
+              disabled={updateStatus.isLoading}
               required
               className="grow-0"
             >
@@ -162,7 +190,7 @@ const PostCreatePage: React.FC = () => {
             <FileInput
               accept="image/*"
               onChange={handleFileSelected}
-              disabled={publishStatus.isLoading}
+              disabled={updateStatus.isLoading}
               className="flex-1 w-full"
             />
             <Button
@@ -170,10 +198,10 @@ const PostCreatePage: React.FC = () => {
               gradientDuoTone="purpleToPink"
               outline
               onClick={handleFileUpload}
-              disabled={fileUploading || publishStatus.isLoading}
+              disabled={fileUploading || updateStatus.isLoading}
               className="flex-0 w-full sm:w-fit"
             >
-              {fileUploading || publishStatus.isLoading ? (
+              {fileUploading || updateStatus.isLoading ? (
                 <>
                   <Spinner size="sm" />
                   <span className="pl-3">Loading...</span>
@@ -197,40 +225,39 @@ const PostCreatePage: React.FC = () => {
               <span className="font-medium">{fileUploadError}</span>
             </Alert>
           )}
-          {fileUrl && (
+          {formData.imageUrl && (
             <img
-              src={fileUrl}
+              src={formData.imageUrl}
               alt="Post Image"
               className="h-72 w-full object-cover"
             />
           )}
           <ReactQuill
             theme="snow"
-            readOnly={publishStatus.isLoading}
-            onChange={(value) => {
-              setFormData({ ...formData, content: value });
-            }}
+            readOnly={updateStatus.isLoading}
+            value={quill}
+            onChange={handleChangeQuill}
             className="h-72"
           />
           <Button
             type="submit"
             gradientDuoTone="purpleToPink"
-            disabled={publishStatus.isLoading}
+            disabled={updateStatus.isLoading}
             className="mt-12"
           >
-            {publishStatus.isLoading ? (
+            {updateStatus.isLoading ? (
               <>
                 <Spinner size="sm" />
                 <span className="pl-3">Loading...</span>
               </>
             ) : (
-              "Publish"
+              "Update"
             )}
           </Button>
         </form>
-        {publishStatus.errorMsg && (
+        {updateStatus.errorMsg && (
           <Alert color="failure" icon={HiInformationCircle} className="mt-5">
-            <span className="font-medium">{publishStatus.errorMsg}</span>
+            <span className="font-medium">{updateStatus.errorMsg}</span>
           </Alert>
         )}
       </div>
@@ -238,4 +265,4 @@ const PostCreatePage: React.FC = () => {
   );
 };
 
-export default PostCreatePage;
+export default PostEditPage;
