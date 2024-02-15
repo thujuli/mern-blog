@@ -101,7 +101,7 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
 const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const post = await Post.findById(req.params.postId);
-    if (!res.locals.user.isAdmin || post.userId != res.locals.user.id) {
+    if (!res.locals.user.isAdmin || post.userId !== res.locals.user.id) {
       return next(
         createCustomError(403, "You are not allowed to delete this post")
       );
@@ -124,4 +124,61 @@ const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { postCreate, postIndex, postDestroy };
+const postUpdate = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!res.locals.user.isAdmin || post.userId !== res.locals.user.id) {
+      return next(
+        createCustomError(403, "You are not allowed to update this post")
+      );
+    }
+  } catch (error) {
+    if (error.name === "CastError") {
+      return next(createCustomError(404, "Resource not found"));
+    } else {
+      console.error("Post destroy error:", error);
+      return next(createCustomError(500, "Internal server error"));
+    }
+  }
+
+  const { title, content, category, imageUrl }: PostRequest = req.body;
+  const postFields: PostFields = {};
+
+  if (title) {
+    const postTitleExists = await Post.findOne({ title });
+    if (
+      postTitleExists &&
+      postTitleExists.title === title &&
+      postTitleExists.userId !== res.locals.user.id
+    ) {
+      return next(createCustomError(400, "Title already exists"));
+    }
+    postFields.title = title;
+  }
+
+  if (content) {
+    postFields.content = content;
+  }
+
+  if (category) {
+    postFields.category = category;
+  }
+
+  if (imageUrl) {
+    postFields.imageUrl = imageUrl;
+  }
+
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.postId,
+      { $set: postFields },
+      { new: true }
+    );
+    res.json(updatedPost);
+  } catch (error) {
+    console.error("Post update error:", error);
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export { postCreate, postIndex, postDestroy, postUpdate };

@@ -105,9 +105,12 @@ const DashPosts: React.FC = () => {
                 </Table.Cell>
                 <Table.Cell>{post.category}</Table.Cell>
                 <Table.Cell>
-                  <span className="font-medium text-cyan-600 hover:underline hover:cursor-pointer dark:text-cyan-500">
+                  <Link
+                    to={`/posts/${post._id}/edit`}
+                    className="font-medium text-cyan-600 hover:underline hover:cursor-pointer dark:text-cyan-500"
+                  >
                     Edit
-                  </span>
+                  </Link>
                 </Table.Cell>
                 <Table.Cell>
                   <span
