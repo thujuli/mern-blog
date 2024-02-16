@@ -83,9 +83,9 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
 
     const now = new Date();
     const oneMothAgo = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() - 1,
-      new Date().getDate()
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
     );
     const totalLastMothPosts = await Post.countDocuments({
       createdAt: { $gte: oneMothAgo },

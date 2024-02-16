@@ -101,4 +101,43 @@ const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { userUpdate, userDestroy };
+const userIndex = async (req: Request, res: Response, next: NextFunction) => {
+  if (!res.locals.user.isAdmin) {
+    return next(
+      createCustomError(403, "You are not allowed to access this page")
+    );
+  }
+
+  try {
+    const skip = Number(req.params.skip) || 0;
+    const limit = Number(req.params.limit) || 9;
+    const sort = req.params.sort === "asc" ? 1 : -1;
+
+    const users = await User.find()
+      .sort({ updateAt: sort })
+      .skip(skip)
+      .limit(limit);
+    const usersWithoutPass = users.map((user) => {
+      const { password, ...rest } = user.toObject();
+      return rest;
+    });
+
+    const totalUsers = await User.countDocuments();
+    const now = new Date();
+    const oneMothAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDay()
+    );
+    const totalLastMothUsers = await User.countDocuments({
+      createdAt: { $gte: oneMothAgo },
+    });
+
+    res.json({ users: usersWithoutPass, totalUsers, totalLastMothUsers });
+  } catch (error) {
+    console.error("User index error", error);
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export { userUpdate, userDestroy, userIndex };
