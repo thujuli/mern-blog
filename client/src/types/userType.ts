@@ -6,7 +6,7 @@ interface UserForm {
   profilePicture?: string;
 }
 
-interface UserResponse {
+interface UserData {
   _id: string;
   username: string;
   email: string;
@@ -18,4 +18,16 @@ interface UserResponse {
   access_token?: string;
 }
 
-export type { UserForm, UserResponse };
+interface UsersResponse {
+  users: UserData[];
+  totalUsers: number;
+  totalLastMonthUsers: number;
+}
+
+interface UserParams {
+  skip?: number;
+  limit?: number;
+  sort?: number;
+}
+
+export type { UserForm, UserData, UsersResponse, UserParams };

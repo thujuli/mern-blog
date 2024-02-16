@@ -1,4 +1,4 @@
-import { UserResponse } from "./userType";
+import { UserData } from "./userType";
 
 interface GoogleResponse {
   displayName: string | null;
@@ -6,7 +6,7 @@ interface GoogleResponse {
   photoURL: string | null;
 }
 
-type CurrentUser = UserResponse | null;
+type CurrentUser = UserData | null;
 type ErrMsg = string | null;
 type SuccessMsg = string | null;
 type IsLoading = boolean;

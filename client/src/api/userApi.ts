@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UserForm } from "../types/userType";
+import { UserForm, UserParams } from "../types/userType";
 
 axios.defaults.withCredentials = true;
 
@@ -18,4 +18,14 @@ const userDestroy = async (userId: string) => {
   return res.data;
 };
 
-export { userUpdate, userDestroy };
+const userIndex = async (params: UserParams) => {
+  const queryParams = new URLSearchParams(
+    params as Record<string, string>
+  ).toString();
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/users?${queryParams}`
+  );
+  return res.data;
+};
+
+export { userUpdate, userDestroy, userIndex };

@@ -10,7 +10,7 @@ import {
   loginSuccess,
   authReset,
 } from "../redux/slices/authSlice";
-import { UserForm, UserResponse } from "../types/userType";
+import { UserForm, UserData } from "../types/userType";
 import { RootState } from "../redux/store";
 import { loginStore } from "../api/authApi";
 import OAuth from "../components/OAuth";
@@ -48,7 +48,7 @@ const LoginPage: React.FC = function () {
 
     try {
       dispatch(authStart());
-      const res: UserResponse = await loginStore(formData);
+      const res: UserData = await loginStore(formData);
       dispatch(loginSuccess(res));
       navigate("/");
     } catch (error) {
