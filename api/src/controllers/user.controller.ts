@@ -109,12 +109,12 @@ const userIndex = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const skip = Number(req.params.skip) || 0;
-    const limit = Number(req.params.limit) || 9;
-    const sort = req.params.sort === "asc" ? 1 : -1;
+    const skip = Number(req.query.skip) || 0;
+    const limit = Number(req.query.limit) || 9;
+    const sort = req.query.sort === "asc" ? 1 : -1;
 
     const users = await User.find()
-      .sort({ updateAt: sort })
+      .sort({ createdAt: sort })
       .skip(skip)
       .limit(limit);
     const usersWithoutPass = users.map((user) => {
