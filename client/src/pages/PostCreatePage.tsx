@@ -44,6 +44,7 @@ const PostCreatePage: React.FC = () => {
   const [fileUrl, setFileUrl] = useState("");
   const [formData, setFormData] = useState(initialState);
   const [publishStatus, setPublishStatus] = useState(status);
+  const [quill, setQuill] = useState("");
   const navigate = useNavigate();
 
   const handleFileSelected: React.ChangeEventHandler<HTMLInputElement> = (
@@ -106,12 +107,19 @@ const PostCreatePage: React.FC = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleChangeQuill = (event: string) => {
+    setQuill(event);
+  };
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     try {
       setPublishStatus({ errorMsg: "", isLoading: true });
-      const newPost: PostData = await postCreate(formData);
+      const newPost: PostData = await postCreate({
+        ...formData,
+        content: quill,
+      });
       navigate(`/posts/${newPost.slug}`);
     } catch (error) {
       const err = error as AxiosError | Error;
@@ -207,9 +215,7 @@ const PostCreatePage: React.FC = () => {
           <ReactQuill
             theme="snow"
             readOnly={publishStatus.isLoading}
-            onChange={(value) => {
-              setFormData({ ...formData, content: value });
-            }}
+            onChange={handleChangeQuill}
             className="h-72"
           />
           <Button
