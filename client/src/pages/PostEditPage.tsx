@@ -41,7 +41,6 @@ const PostEditPage: React.FC = () => {
   const [fileUploadProgress, setFileUploadProgress] = useState(0);
   const [fileUploading, setFileUploading] = useState(false);
   const [fileUploadError, setFileUploadError] = useState("");
-  // const [fileUrl, setFileUrl] = useState("");
   const [formData, setFormData] = useState(initialState);
   const [updateStatus, setUpdateStatus] = useState(status);
   const [quill, setQuill] = useState("");
@@ -96,11 +95,9 @@ const PostEditPage: React.FC = () => {
             );
             setFileUploadProgress(0);
             setFileUploading(false);
-            // setFileUrl("");
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              // setFileUrl(downloadURL);
               setFileUploadError("");
               setFileUploading(false);
               setFormData({ ...formData, imageUrl: downloadURL });
