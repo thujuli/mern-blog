@@ -86,7 +86,7 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
-  if (res.locals.user.id !== req.params.userId) {
+  if (res.locals.user.id !== req.params.userId && !res.locals.user.isAdmin) {
     return next(
       createCustomError(403, "You are not allowed to delete this user")
     );
