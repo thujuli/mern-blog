@@ -5,7 +5,7 @@ import { CurrentUser } from "../types/authType";
 import { RootState } from "../redux/store";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { UserData, UsersResponse } from "../types/userType";
-import { userIndex } from "../api/userApi";
+import { userDestroy, userIndex } from "../api/userApi";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 const DashUsers: React.FC = () => {
@@ -54,6 +54,14 @@ const DashUsers: React.FC = () => {
     HTMLButtonElement
   > = async () => {
     setShowModal(false);
+    if (currentUser) {
+      try {
+        await userDestroy(userId);
+        setUsers((prev) => prev.filter((user) => user._id !== userId));
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
   return (
     <div className="overflow-x-auto mx-auto p-4">
