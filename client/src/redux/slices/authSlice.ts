@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserResponse } from "../../types/userType";
+import { UserData } from "../../types/userType";
 import {
   CurrentUser,
   ErrMsg,
@@ -30,7 +30,7 @@ const userSlice = createSlice({
       state.isLoading = true;
       state.errMsg = null;
     },
-    loginSuccess: (state, action: PayloadAction<UserResponse>) => {
+    loginSuccess: (state, action: PayloadAction<UserData>) => {
       state.currentUser = action.payload;
       state.isLoading = false;
       state.errMsg = null;
