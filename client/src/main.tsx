@@ -16,6 +16,7 @@ import PrivateRoute from "./components/PrivateRoute.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import PostCreatePage from "./pages/PostCreatePage.tsx";
 import PostEditPage from "./pages/PostEditPage.tsx";
+import PostShowPage from "./pages/PostShowPage.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
     path: "/posts/:postId/edit",
     element: <AdminRoute component={<PostEditPage />} />,
   },
+  { path: "/posts/:slug", element: <PostShowPage /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegistrationPage /> },
   { path: "/projects", element: <ProjectsPage /> },
