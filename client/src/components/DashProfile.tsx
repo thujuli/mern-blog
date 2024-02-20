@@ -17,7 +17,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import app from "../utils/firebase";
-import { UserForm, UserResponse } from "../types/userType";
+import { UserForm, UserData } from "../types/userType";
 import { userDestroy, userUpdate } from "../api/userApi";
 import {
   HiInformationCircle,
@@ -144,7 +144,7 @@ const DashProfile: React.FC = () => {
       try {
         dispatch(userUpdateStart());
         setWarnMsg("");
-        const res: UserResponse = await userUpdate(currentUser._id, formData);
+        const res: UserData = await userUpdate(currentUser._id, formData);
         dispatch(
           userUpdateSuccess({ message: "User updated successfully", user: res })
         );

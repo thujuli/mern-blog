@@ -5,7 +5,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { UserResponse } from "../types/userType";
+import { UserData } from "../types/userType";
 import { CurrentUser } from "../types/authType";
 import { Mode } from "../types/themeType";
 import { themeToggle } from "../redux/slices/themeSlice";
@@ -13,7 +13,7 @@ import { logoutDestroy } from "../api/authApi";
 import { logoutSuccess } from "../redux/slices/authSlice";
 
 interface PropsUserDropdown {
-  currentUser: UserResponse;
+  currentUser: UserData;
 }
 
 const LoginBtn: React.FC = () => {
