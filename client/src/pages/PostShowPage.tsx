@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { PostData, PostsResponse } from "../types/postType";
 import { postIndex } from "../api/postApi";
 import { Button, Spinner } from "flowbite-react";
+import CommentSection from "../components/CommentSection";
 
 const PostShowPage: React.FC = () => {
   const { slug } = useParams();
@@ -61,6 +62,7 @@ const PostShowPage: React.FC = () => {
             className="px-3 mx-auto w-full max-w-2xl post-content"
           ></div>
         </main>
+        <CommentSection postId={post._id} />
       </MainLayout>
     );
   }
