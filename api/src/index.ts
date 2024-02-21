@@ -6,6 +6,7 @@ import "dotenv/config";
 import authRoute from "./routes/auth.route";
 import userRoute from "./routes/user.route";
 import postRoute from "./routes/post.route";
+import commentRoute from "./routes/comment.route";
 import { errorHandler } from "./middlewares/error.middleware";
 
 mongoose
@@ -31,5 +32,6 @@ app.listen(process.env.PORT, () =>
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/comments", commentRoute);
 
 app.use(errorHandler);
