@@ -17,7 +17,7 @@ const commentCreate = async (
     await Post.findById(postId);
   } catch (error) {
     if (error.name === "CastError") {
-      return next(createCustomError(404, "Resource not found"));
+      return next(createCustomError(404, "Post not found"));
     } else {
       console.error("Comment create error:", error);
       return next(createCustomError(500, "Internal server error"));
@@ -38,4 +38,24 @@ const commentCreate = async (
   }
 };
 
-export { commentCreate };
+const commentIndex = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const comments = await Comment.find({ postId: req.params.postId }).sort({
+      createdAt: -1,
+    });
+
+    if (comments.length === 0) {
+      return next(createCustomError(404, "Comment not found"));
+    }
+    res.json(comments);
+  } catch (error) {
+    console.error("Comment index error:", error);
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export { commentCreate, commentIndex };

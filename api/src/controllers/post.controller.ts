@@ -108,7 +108,7 @@ const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
     }
   } catch (error) {
     if (error.name === "CastError") {
-      return next(createCustomError(404, "Resource not found"));
+      return next(createCustomError(404, "Post not found"));
     } else {
       console.error("Post destroy error:", error);
       return next(createCustomError(500, "Internal server error"));
@@ -134,7 +134,7 @@ const postUpdate = async (req: Request, res: Response, next: NextFunction) => {
     }
   } catch (error) {
     if (error.name === "CastError") {
-      return next(createCustomError(404, "Resource not found"));
+      return next(createCustomError(404, "Post not found"));
     } else {
       console.error("Post destroy error:", error);
       return next(createCustomError(500, "Internal server error"));
