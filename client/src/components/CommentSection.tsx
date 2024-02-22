@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CurrentUser } from "../types/authType";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Textarea } from "flowbite-react";
-import { commentCreate } from "../api/commentApi";
+import { commentCreate, commentLike } from "../api/commentApi";
 import { CommentData } from "../types/commentType";
 import Comment from "./Comment";
 import { postComments } from "../api/postApi";
@@ -17,6 +17,7 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
   const { currentUser }: { currentUser: CurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
+  const navigate = useNavigate();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<CommentData[]>([]);
 
@@ -49,6 +50,27 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
       console.log(error);
     }
   };
+
+  const handleLike = async (commentId: string) => {
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res: CommentData = await commentLike(commentId);
+      setComments(
+        comments.map((comment) =>
+          comment._id === commentId
+            ? { ...comment, likes: res.likes, numberOfLikes: res.numberOfLikes }
+            : comment
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto px-3 pb-3">
       {currentUser ? (
@@ -115,7 +137,7 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
         </div>
       )}
       {comments.map((comment) => (
-        <Comment key={comment._id} comment={comment} />
+        <Comment key={comment._id} comment={comment} onLike={handleLike} />
       ))}
     </div>
   );
