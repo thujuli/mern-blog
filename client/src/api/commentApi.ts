@@ -14,4 +14,11 @@ const commentCreate = async (data: CommentForm) => {
   return res.data;
 };
 
-export { commentCreate };
+const commentIndex = async (postId: string) => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/comments/${postId}`
+  );
+  return res.data;
+};
+
+export { commentCreate, commentIndex };

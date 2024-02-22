@@ -15,7 +15,6 @@ interface UserData {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  access_token?: string;
 }
 
 interface UsersResponse {

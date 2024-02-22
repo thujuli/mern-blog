@@ -140,4 +140,19 @@ const userIndex = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { userUpdate, userDestroy, userIndex };
+const userShow = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const { password, ...rest } = user.toObject();
+    res.json(rest);
+  } catch (error) {
+    if (error.name === "CastError") {
+      return next(createCustomError(404, "User not found"));
+    } else {
+      console.error("User show error:", error);
+      return next(createCustomError(500, "Internal server error"));
+    }
+  }
+};
+
+export { userUpdate, userDestroy, userIndex, userShow };
