@@ -92,8 +92,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
     res.cookie("token", token, { httpOnly: true }).json(rest);
   } catch (error) {
-    console.error("Login error:", error);
-    next(createCustomError(500, "Internal server error"));
+    if (error.statusCode === 400) {
+      next(error);
+    } else {
+      console.error("Login error:", error);
+      next(createCustomError(500, "Internal server error"));
+    }
   }
 };
 
