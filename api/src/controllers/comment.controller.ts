@@ -38,4 +38,28 @@ const commentCreate = async (
   }
 };
 
-export { commentCreate };
+const commentLike = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    const userIndex = comment.likes.indexOf(res.locals.user.id);
+
+    if (userIndex === -1) {
+      comment.likes.push(res.locals.user.id);
+      comment.numberOfLikes++;
+    } else {
+      comment.likes.splice(userIndex, 1);
+      comment.numberOfLikes--;
+    }
+    await comment.save();
+    res.json(comment);
+  } catch (error) {
+    if (error.name === "CastError") {
+      return next(createCustomError(404, "Comment not found"));
+    } else {
+      console.error("Comment like error", error);
+      return next(createCustomError(500, "Internal server error"));
+    }
+  }
+};
+
+export { commentCreate, commentLike };
