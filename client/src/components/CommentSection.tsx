@@ -4,9 +4,10 @@ import { RootState } from "../redux/store";
 import { CurrentUser } from "../types/authType";
 import { Link } from "react-router-dom";
 import { Button, Textarea } from "flowbite-react";
-import { commentCreate, commentIndex } from "../api/commentApi";
+import { commentCreate } from "../api/commentApi";
 import { CommentData } from "../types/commentType";
 import Comment from "./Comment";
+import { postComments } from "../api/postApi";
 
 interface Props {
   postId: string;
@@ -22,7 +23,7 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const comments: CommentData[] = await commentIndex(postId);
+        const comments: CommentData[] = await postComments(postId);
         setComments(comments);
       } catch (error) {
         console.log(error);

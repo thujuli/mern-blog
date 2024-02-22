@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import createCustomError from "../utils/error";
 import { PostRequest, PostFields } from "post.type";
 import Post from "../models/post.model";
+import Comment from "../models/comment.model";
 
 const postCreate = async (req: Request, res: Response, next: NextFunction) => {
   if (!res.locals.user.isAdmin) {
@@ -181,4 +182,24 @@ const postUpdate = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { postCreate, postIndex, postDestroy, postUpdate };
+const postComments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const comments = await Comment.find({ postId: req.params.postId }).sort({
+      createdAt: -1,
+    });
+
+    if (comments.length === 0) {
+      return next(createCustomError(404, "Comment not found"));
+    }
+    res.json(comments);
+  } catch (error) {
+    console.error("Post commets error:", error);
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export { postCreate, postIndex, postDestroy, postUpdate, postComments };

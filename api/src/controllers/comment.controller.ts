@@ -38,24 +38,4 @@ const commentCreate = async (
   }
 };
 
-const commentIndex = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const comments = await Comment.find({ postId: req.params.postId }).sort({
-      createdAt: -1,
-    });
-
-    if (comments.length === 0) {
-      return next(createCustomError(404, "Comment not found"));
-    }
-    res.json(comments);
-  } catch (error) {
-    console.error("Comment index error:", error);
-    next(createCustomError(500, "Internal server error"));
-  }
-};
-
-export { commentCreate, commentIndex };
+export { commentCreate };
