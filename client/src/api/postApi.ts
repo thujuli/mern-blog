@@ -41,4 +41,11 @@ const postUpdate = async (postId: string, data: PostForm) => {
   return res.data;
 };
 
-export { postCreate, postIndex, postDestroy, postUpdate };
+const postComments = async (postId: string) => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/posts/${postId}/comments`
+  );
+  return res.data;
+};
+
+export { postCreate, postIndex, postDestroy, postUpdate, postComments };
