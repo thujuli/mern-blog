@@ -5,6 +5,7 @@ import { PostData, PostsResponse } from "../types/postType";
 import { postIndex } from "../api/postApi";
 import { Button, Spinner } from "flowbite-react";
 import CommentSection from "../components/CommentSection";
+import axios, { AxiosError } from "axios";
 
 const PostShowPage: React.FC = () => {
   const { slug } = useParams();
@@ -18,7 +19,10 @@ const PostShowPage: React.FC = () => {
         setPost(res.posts[0]);
         setIsLoading(false);
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     };
     fetchData();

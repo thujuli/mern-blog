@@ -19,7 +19,9 @@ const commentCreate = async (
     if (error.name === "CastError") {
       return next(createCustomError(404, "Post not found"));
     } else {
-      console.error("Comment create error:", error);
+      if (error instanceof Error) {
+        console.error("Comment create error:", error.message);
+      }
       return next(createCustomError(500, "Internal server error"));
     }
   }
@@ -33,7 +35,9 @@ const commentCreate = async (
     await newComment.save();
     res.json(newComment);
   } catch (error) {
-    console.error("Comment create error:", error);
+    if (error instanceof Error) {
+      console.error("Comment create error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -56,7 +60,9 @@ const commentLike = async (req: Request, res: Response, next: NextFunction) => {
     if (error.name === "CastError") {
       return next(createCustomError(404, "Comment not found"));
     } else {
-      console.error("Comment like error", error);
+      if (error instanceof Error) {
+        console.error("Comment like error", error.message);
+      }
       return next(createCustomError(500, "Internal server error"));
     }
   }

@@ -7,6 +7,7 @@ import { FaThumbsUp } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CurrentUser } from "../types/authType";
+import axios, { AxiosError } from "axios";
 
 interface Props {
   comment: CommentData;
@@ -25,7 +26,10 @@ const Comment: React.FC<Props> = ({ comment, onLike }: Props) => {
         const user: UserData = await userShow(comment.userId);
         setUser(user);
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     };
     fetchData();
