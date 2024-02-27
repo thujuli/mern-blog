@@ -7,6 +7,7 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { UserData, UsersResponse } from "../types/userType";
 import { userDestroy, userIndex } from "../api/userApi";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import axios, { AxiosError } from "axios";
 
 const DashUsers: React.FC = () => {
   const { currentUser }: { currentUser: CurrentUser } = useSelector(
@@ -26,7 +27,10 @@ const DashUsers: React.FC = () => {
           setShowMore(res.totalUsers > 9 ? true : false);
         }
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     };
     fetchData();
@@ -45,7 +49,10 @@ const DashUsers: React.FC = () => {
         setUsers((prev) => [...prev, ...res.users]);
         res.users.length <= 9 ? setShowMore(false) : setShowMore(true);
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     }
   };
@@ -59,7 +66,10 @@ const DashUsers: React.FC = () => {
         await userDestroy(userId);
         setUsers((prev) => prev.filter((user) => user._id !== userId));
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     }
   };

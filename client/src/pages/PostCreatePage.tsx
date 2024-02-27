@@ -94,7 +94,9 @@ const PostCreatePage: React.FC = () => {
         setFileUploadError("Please select an image");
       }
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
       setFileUploadError("Image upload failed");
       setFileUploadProgress(0);
       setFileUploading(false);
@@ -124,13 +126,13 @@ const PostCreatePage: React.FC = () => {
     } catch (error) {
       const err = error as AxiosError | Error;
       if (axios.isAxiosError(err)) {
-        console.error("Post create error:", err.response?.data.message);
+        console.error(err.response?.data?.message);
         setPublishStatus({
-          errorMsg: err.response?.data.message,
+          errorMsg: err.response?.data?.message,
           isLoading: false,
         });
       } else {
-        console.error("Post create error:", err.message);
+        console.error(err.message);
         setPublishStatus({
           errorMsg: err.message,
           isLoading: false,

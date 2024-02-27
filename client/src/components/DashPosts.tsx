@@ -7,6 +7,7 @@ import { CurrentUser } from "../types/authType";
 import { RootState } from "../redux/store";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import axios, { AxiosError } from "axios";
 
 const DashPosts: React.FC = () => {
   const { currentUser }: { currentUser: CurrentUser } = useSelector(
@@ -28,7 +29,10 @@ const DashPosts: React.FC = () => {
           setShowMore(res.totalPosts > 9 ? true : false);
         }
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     };
     fetchData();
@@ -48,7 +52,10 @@ const DashPosts: React.FC = () => {
         setUserPosts((prev) => [...prev, ...res.posts]);
         res.posts.length <= 9 ? setShowMore(false) : setShowMore(true);
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     }
   };
@@ -62,7 +69,10 @@ const DashPosts: React.FC = () => {
         await postDestroy(postId);
         setUserPosts((prev) => prev.filter((post) => post._id !== postId));
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     }
   };

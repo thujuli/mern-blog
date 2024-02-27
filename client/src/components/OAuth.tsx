@@ -29,14 +29,11 @@ const OAuth: React.FC = () => {
       const res = await googleStore({ displayName, email, photoURL });
       dispatch(loginSuccess(res));
       navigate("/");
-    } catch (err) {
-      const error = err as AxiosError | Error;
-
-      if (axios.isAxiosError(error)) {
-        console.log(error.response?.data.message);
-      } else {
-        console.log(error.message);
-      }
+    } catch (error) {
+      const err = error as AxiosError | Error;
+      axios.isAxiosError(err)
+        ? console.error(err.response?.data?.message)
+        : console.error(err.message);
     }
   };
   return (
