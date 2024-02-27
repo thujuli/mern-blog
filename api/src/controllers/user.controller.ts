@@ -80,7 +80,9 @@ const userUpdate = async (req: Request, res: Response, next: NextFunction) => {
     const { password: pass, ...rest } = userUpdate.toObject();
     res.json(rest);
   } catch (error) {
-    console.error("User update error:", error);
+    if (error instanceof Error) {
+      console.error("User update error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -96,7 +98,9 @@ const userDestroy = async (req: Request, res: Response, next: NextFunction) => {
     await User.findByIdAndDelete(req.params.userId);
     res.json({ message: "User has been deleted" });
   } catch (error) {
-    console.error("User destroy error:", error);
+    if (error instanceof Error) {
+      console.error("User destroy error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -135,7 +139,9 @@ const userIndex = async (req: Request, res: Response, next: NextFunction) => {
 
     res.json({ users: usersWithoutPass, totalUsers, totalLastMothUsers });
   } catch (error) {
-    console.error("User index error", error);
+    if (error instanceof Error) {
+      console.error("User index error", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -149,7 +155,9 @@ const userShow = async (req: Request, res: Response, next: NextFunction) => {
     if (error.name === "CastError") {
       return next(createCustomError(404, "User not found"));
     } else {
-      console.error("User show error:", error);
+      if (error instanceof Error) {
+        console.error("User show error:", error.message);
+      }
       return next(createCustomError(500, "Internal server error"));
     }
   }

@@ -61,7 +61,9 @@ const registration = async (
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
-    console.error("Registration error:", error);
+    if (error instanceof Error) {
+      console.error("Registration error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -95,7 +97,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     if (error.statusCode === 400) {
       next(error);
     } else {
-      console.error("Login error:", error);
+      if (error instanceof Error) {
+        console.error("Login error:", error.message);
+      }
       next(createCustomError(500, "Internal server error"));
     }
   }
@@ -144,7 +148,9 @@ const google = async (req: Request, res: Response, next: NextFunction) => {
         .json(rest);
     }
   } catch (error) {
-    console.error("Google registration error:", error);
+    if (error instanceof Error) {
+      console.error("Google registration error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };

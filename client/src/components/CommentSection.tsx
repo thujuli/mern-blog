@@ -8,6 +8,7 @@ import { commentCreate, commentLike } from "../api/commentApi";
 import { CommentData } from "../types/commentType";
 import Comment from "./Comment";
 import { postComments } from "../api/postApi";
+import axios, { AxiosError } from "axios";
 
 interface Props {
   postId: string;
@@ -27,7 +28,10 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
         const comments: CommentData[] = await postComments(postId);
         setComments(comments);
       } catch (error) {
-        console.log(error);
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
       }
     };
     fetchData();
@@ -47,7 +51,10 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
       setComment("");
       setComments([res, ...comments]);
     } catch (error) {
-      console.log(error);
+      const err = error as AxiosError | Error;
+      axios.isAxiosError(err)
+        ? console.error(err.response?.data?.message)
+        : console.error(err.message);
     }
   };
 
@@ -67,7 +74,10 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
         )
       );
     } catch (error) {
-      console.log(error);
+      const err = error as AxiosError | Error;
+      axios.isAxiosError(err)
+        ? console.error(err.response?.data?.message)
+        : console.error(err.message);
     }
   };
 

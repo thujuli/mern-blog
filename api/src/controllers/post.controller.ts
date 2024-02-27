@@ -54,7 +54,9 @@ const postCreate = async (req: Request, res: Response, next: NextFunction) => {
     await newPost.save();
     res.status(201).json(newPost);
   } catch (error) {
-    console.error("Post create error:", error);
+    if (error instanceof Error) {
+      console.error("Post create error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -94,7 +96,9 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
 
     res.json({ posts, totalPosts, totalLastMothPosts });
   } catch (error) {
-    console.error("Post index error:", error);
+    if (error instanceof Error) {
+      console.error("Post index error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -111,7 +115,9 @@ const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
     if (error.name === "CastError") {
       return next(createCustomError(404, "Post not found"));
     } else {
-      console.error("Post destroy error:", error);
+      if (error instanceof Error) {
+        console.error("Post destroy error:", error.message);
+      }
       return next(createCustomError(500, "Internal server error"));
     }
   }
@@ -120,7 +126,9 @@ const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
     await Post.findByIdAndDelete(req.params.postId);
     res.json({ message: "Post has been deleted" });
   } catch (error) {
-    console.error("Post destroy error:", error);
+    if (error instanceof Error) {
+      console.error("Post destroy error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -137,7 +145,9 @@ const postUpdate = async (req: Request, res: Response, next: NextFunction) => {
     if (error.name === "CastError") {
       return next(createCustomError(404, "Post not found"));
     } else {
-      console.error("Post destroy error:", error);
+      if (error instanceof Error) {
+        console.error("Post destroy error:", error.message);
+      }
       return next(createCustomError(500, "Internal server error"));
     }
   }
@@ -177,7 +187,9 @@ const postUpdate = async (req: Request, res: Response, next: NextFunction) => {
     );
     res.json(updatedPost);
   } catch (error) {
-    console.error("Post update error:", error);
+    if (error instanceof Error) {
+      console.error("Post update error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };
@@ -197,7 +209,9 @@ const postComments = async (
     }
     res.json(comments);
   } catch (error) {
-    console.error("Post commets error:", error);
+    if (error instanceof Error) {
+      console.error("Post commets error:", error.message);
+    }
     next(createCustomError(500, "Internal server error"));
   }
 };

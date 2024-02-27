@@ -11,7 +11,7 @@ const handleDispatchError = (
 ) => {
   const err = error as Error | AxiosError;
   if (axios.isAxiosError(err)) {
-    dispatch(actionCreator(err.response?.data.message));
+    dispatch(actionCreator(err.response?.data?.message));
   } else {
     dispatch(actionCreator(err.message ?? "An unknown error occured"));
   }
