@@ -152,7 +152,7 @@ const userShow = async (req: Request, res: Response, next: NextFunction) => {
     const { password, ...rest } = user.toObject();
     res.json(rest);
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error instanceof Error && error.name === "CastError") {
       return next(createCustomError(404, "User not found"));
     } else {
       if (error instanceof Error) {

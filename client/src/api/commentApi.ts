@@ -18,4 +18,12 @@ const commentLike = async (commentId: string) => {
   return res.data;
 };
 
-export { commentCreate, commentLike };
+const commentUpdate = async (commentId: string, content: string) => {
+  const res = await axios.put(
+    `${import.meta.env.VITE_API_BASE_URL}/comments/${commentId}`,
+    { content }
+  );
+  return res.data;
+};
+
+export { commentCreate, commentLike, commentUpdate };

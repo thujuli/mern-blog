@@ -4,7 +4,7 @@ import { RootState } from "../redux/store";
 import { CurrentUser } from "../types/authType";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Textarea } from "flowbite-react";
-import { commentCreate, commentLike } from "../api/commentApi";
+import { commentCreate, commentLike, commentUpdate } from "../api/commentApi";
 import { CommentData } from "../types/commentType";
 import Comment from "./Comment";
 import { postComments } from "../api/postApi";
@@ -70,6 +70,32 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
         comments.map((comment) =>
           comment._id === commentId
             ? { ...comment, likes: res.likes, numberOfLikes: res.numberOfLikes }
+            : comment
+        )
+      );
+    } catch (error) {
+      const err = error as AxiosError | Error;
+      axios.isAxiosError(err)
+        ? console.error(err.response?.data?.message)
+        : console.error(err.message);
+    }
+  };
+
+  const handleEdit = async (commentId: string, content: string) => {
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res: CommentData = await commentUpdate(commentId, content);
+      setComments(
+        comments.map((comment) =>
+          comment._id === commentId
+            ? {
+                ...comment,
+                content: res.content,
+              }
             : comment
         )
       );
@@ -147,7 +173,12 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
         </div>
       )}
       {comments.map((comment) => (
-        <Comment key={comment._id} comment={comment} onLike={handleLike} />
+        <Comment
+          key={comment._id}
+          comment={comment}
+          onLike={handleLike}
+          onEdit={handleEdit}
+        />
       ))}
     </div>
   );

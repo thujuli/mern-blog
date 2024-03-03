@@ -57,15 +57,54 @@ const commentLike = async (req: Request, res: Response, next: NextFunction) => {
     await comment.save();
     res.json(comment);
   } catch (error) {
-    if (error.name === "CastError") {
-      return next(createCustomError(404, "Comment not found"));
+    if (error instanceof Error && error.name === "CastError") {
+      next(createCustomError(404, "Comment not found"));
     } else {
       if (error instanceof Error) {
         console.error("Comment like error", error.message);
       }
-      return next(createCustomError(500, "Internal server error"));
+      next(createCustomError(500, "Internal server error"));
     }
   }
 };
 
-export { commentCreate, commentLike };
+const commentUpdate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+
+    if (!res.locals.user.isAdmin || res.locals.user.id !== comment.userId) {
+      return next(
+        createCustomError(403, "You are not allowed to edit this comment")
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === "CastError") {
+      return next(createCustomError(404, "Comment not found"));
+    } else {
+      if (error instanceof Error) {
+        console.error("Comment update error:", error.message);
+      }
+      return next(createCustomError(500, "Internal server error"));
+    }
+  }
+
+  try {
+    const editedComment = await Comment.findByIdAndUpdate(
+      req.params.commentId,
+      { content: req.body.content },
+      { new: true }
+    );
+    res.json(editedComment);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Comment update error:", error.message);
+    }
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export { commentCreate, commentLike, commentUpdate };
