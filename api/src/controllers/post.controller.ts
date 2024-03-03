@@ -112,7 +112,7 @@ const postDestroy = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error instanceof Error && error.name === "CastError") {
       return next(createCustomError(404, "Post not found"));
     } else {
       if (error instanceof Error) {
@@ -142,7 +142,7 @@ const postUpdate = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
   } catch (error) {
-    if (error.name === "CastError") {
+    if (error instanceof Error && error.name === "CastError") {
       return next(createCustomError(404, "Post not found"));
     } else {
       if (error instanceof Error) {
