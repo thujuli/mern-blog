@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import createCustomError from "../utils/error";
 import Comment from "../models/comment.model";
 import Post from "../models/post.model";
-import { error } from "console";
 
 const commentCreate = async (
   req: Request,
@@ -135,11 +134,12 @@ const commentDestroy = async (
   try {
     await Comment.findByIdAndDelete(req.params.commentId);
     res.json({ message: "Comment has been deleted" });
-  } catch (error) {}
-  if (error instanceof Error) {
-    console.error("Comment destroy error:", error.message);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Comment destroy error:", error.message);
+    }
+    next(createCustomError(500, "Internal server error"));
   }
-  next(createCustomError(500, "Internal server error"));
 };
 
 export { commentCreate, commentLike, commentUpdate, commentDestroy };
