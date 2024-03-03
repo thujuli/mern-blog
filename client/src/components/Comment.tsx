@@ -14,9 +14,15 @@ interface Props {
   comment: CommentData;
   onLike: (commentId: string) => void;
   onEdit: (commentId: string, content: string) => void;
+  onDelete: (commentId: string) => void;
 }
 
-const Comment: React.FC<Props> = ({ comment, onLike, onEdit }: Props) => {
+const Comment: React.FC<Props> = ({
+  comment,
+  onLike,
+  onEdit,
+  onDelete,
+}: Props) => {
   const { currentUser }: { currentUser: CurrentUser } = useSelector(
     (state: RootState) => state.auth
   );
@@ -39,12 +45,12 @@ const Comment: React.FC<Props> = ({ comment, onLike, onEdit }: Props) => {
     fetchData();
   }, [comment]);
 
-  const handleEdit = () => {
+  const handleEdit: React.MouseEventHandler<HTMLButtonElement> = () => {
     setIsEditing(true);
     setEditedContent(comment.content);
   };
 
-  const handleSave = () => {
+  const handleSave: React.MouseEventHandler<HTMLButtonElement> = () => {
     onEdit(comment._id, editedContent);
     setIsEditing(false);
   };
@@ -114,13 +120,22 @@ const Comment: React.FC<Props> = ({ comment, onLike, onEdit }: Props) => {
                   </p>
                   {(currentUser?._id === comment.userId ||
                     currentUser?.isAdmin) && (
-                    <button
-                      type="button"
-                      className="text-sm text-gray-400 hover:text-blue-500"
-                      onClick={handleEdit}
-                    >
-                      Edit
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        className="text-sm text-gray-400 hover:text-blue-500"
+                        onClick={handleEdit}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="text-sm text-gray-400 hover:text-red-500"
+                        onClick={() => onDelete(comment._id)}
+                      >
+                        Delete
+                      </button>
+                    </>
                   )}
                 </div>
               </>

@@ -3,12 +3,18 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { CurrentUser } from "../types/authType";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Textarea } from "flowbite-react";
-import { commentCreate, commentLike, commentUpdate } from "../api/commentApi";
+import { Button, Modal, Textarea } from "flowbite-react";
+import {
+  commentCreate,
+  commentDestroy,
+  commentLike,
+  commentUpdate,
+} from "../api/commentApi";
 import { CommentData } from "../types/commentType";
 import Comment from "./Comment";
 import { postComments } from "../api/postApi";
 import axios, { AxiosError } from "axios";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 interface Props {
   postId: string;
@@ -21,6 +27,8 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
   const navigate = useNavigate();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<CommentData[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,6 +115,34 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
     }
   };
 
+  const handleDelete = (commentId: string) => {
+    setShowModal(true);
+    setCommentToDelete(commentId);
+  };
+
+  const handleCommentDestroy: React.MouseEventHandler<
+    HTMLButtonElement
+  > = async () => {
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+
+    if (commentToDelete) {
+      try {
+        await commentDestroy(commentToDelete);
+        setComments(
+          comments.filter((comment) => comment._id !== commentToDelete)
+        );
+      } catch (error) {
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
+      }
+    }
+    setShowModal(false);
+  };
   return (
     <div className="max-w-2xl mx-auto px-3 pb-3">
       {currentUser ? (
@@ -178,8 +214,33 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
           comment={comment}
           onLike={handleLike}
           onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       ))}
+      <Modal
+        show={showModal}
+        size="md"
+        onClose={() => setShowModal(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this comment?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handleCommentDestroy}>
+                Yes, I'm sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
