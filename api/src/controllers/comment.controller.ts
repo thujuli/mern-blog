@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import createCustomError from "../utils/error";
 import Comment from "../models/comment.model";
 import Post from "../models/post.model";
+import { error } from "console";
 
 const commentCreate = async (
   req: Request,
@@ -107,4 +108,38 @@ const commentUpdate = async (
   }
 };
 
-export { commentCreate, commentLike, commentUpdate };
+const commentDestroy = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+
+    if (!res.locals.user.isAdmin || res.locals.user.id !== comment.userId) {
+      return next(
+        createCustomError(403, "You are not allowed to delete this comment")
+      );
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === "CastError") {
+      return next(createCustomError(404, "Comment not found"));
+    } else {
+      if (error instanceof Error) {
+        console.error("Comment destroy error:", error.message);
+      }
+      return next(createCustomError(500, "Internal server error"));
+    }
+  }
+
+  try {
+    await Comment.findByIdAndDelete(req.params.commentId);
+    res.json({ message: "Comment has been deleted" });
+  } catch (error) {}
+  if (error instanceof Error) {
+    console.error("Comment destroy error:", error.message);
+  }
+  next(createCustomError(500, "Internal server error"));
+};
+
+export { commentCreate, commentLike, commentUpdate, commentDestroy };

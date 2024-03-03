@@ -26,4 +26,11 @@ const commentUpdate = async (commentId: string, content: string) => {
   return res.data;
 };
 
-export { commentCreate, commentLike, commentUpdate };
+const commentDestroy = async (commentId: string) => {
+  const res = await axios.delete(
+    `${import.meta.env.VITE_API_BASE_URL}/comments/${commentId}`
+  );
+  return res.data;
+};
+
+export { commentCreate, commentLike, commentUpdate, commentDestroy };
