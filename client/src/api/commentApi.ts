@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CommentForm } from "../types/commentType";
+import { CommentForm, CommentParams } from "../types/commentType";
 
 axios.defaults.withCredentials = true;
 
@@ -33,4 +33,20 @@ const commentDestroy = async (commentId: string) => {
   return res.data;
 };
 
-export { commentCreate, commentLike, commentUpdate, commentDestroy };
+const commentIndex = async (params: CommentParams) => {
+  const queryParams = new URLSearchParams(
+    params as Record<string, string>
+  ).toString();
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_BASE_URL}/comments?${queryParams}`
+  );
+  return res.data;
+};
+
+export {
+  commentCreate,
+  commentLike,
+  commentUpdate,
+  commentDestroy,
+  commentIndex,
+};

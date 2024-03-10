@@ -133,11 +133,11 @@ const userIndex = async (req: Request, res: Response, next: NextFunction) => {
       now.getMonth() - 1,
       now.getDay()
     );
-    const totalLastMothUsers = await User.countDocuments({
+    const totalLastMonthUsers = await User.countDocuments({
       createdAt: { $gte: oneMothAgo },
     });
 
-    res.json({ users: usersWithoutPass, totalUsers, totalLastMothUsers });
+    res.json({ users: usersWithoutPass, totalUsers, totalLastMonthUsers });
   } catch (error) {
     if (error instanceof Error) {
       console.error("User index error", error.message);

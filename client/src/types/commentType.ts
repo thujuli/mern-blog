@@ -15,4 +15,16 @@ interface CommentData {
   __v: number;
 }
 
-export type { CommentForm, CommentData };
+interface CommentsResponse {
+  comments: CommentData[];
+  totalComments: number;
+  totalLastMonthComments: number;
+}
+
+interface CommentParams {
+  skip?: number;
+  limit?: number;
+  sort?: number;
+}
+
+export type { CommentForm, CommentData, CommentParams, CommentsResponse };
