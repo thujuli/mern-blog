@@ -115,7 +115,7 @@ const commentDestroy = async (
   try {
     const comment = await Comment.findById(req.params.commentId);
 
-    if (!res.locals.user.isAdmin || res.locals.user.id !== comment.userId) {
+    if (!res.locals.user.isAdmin) {
       return next(
         createCustomError(403, "You are not allowed to delete this comment")
       );
@@ -142,4 +142,51 @@ const commentDestroy = async (
   }
 };
 
-export { commentCreate, commentLike, commentUpdate, commentDestroy };
+const commentIndex = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!res.locals.user.isAdmin) {
+    return next(
+      createCustomError(403, "You are not allowed to access this page")
+    );
+  }
+
+  try {
+    const skip = Number(req.query.skip) || 0;
+    const limit = Number(req.query.limit) || 9;
+    const sort = req.query.sort === "asc" ? 1 : -1;
+
+    const comments = await Comment.find()
+      .sort({ createdAt: sort })
+      .skip(skip)
+      .limit(limit);
+
+    const totalComments = await Comment.countDocuments();
+    const now = new Date();
+    const oneMothAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDay()
+    );
+    const totalLastMonthComments = await Comment.countDocuments({
+      createdAt: { $gte: oneMothAgo },
+    });
+
+    res.json({ comments, totalComments, totalLastMonthComments });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Comment index error", error.message);
+    }
+    next(createCustomError(500, "Internal server error"));
+  }
+};
+
+export {
+  commentCreate,
+  commentLike,
+  commentUpdate,
+  commentDestroy,
+  commentIndex,
+};

@@ -6,6 +6,7 @@ import {
   HiUser,
   HiUserGroup,
 } from "react-icons/hi";
+import { BiSolidCommentDetail } from "react-icons/bi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logoutDestroy } from "../api/authApi";
 import { logoutSuccess } from "../redux/slices/authSlice";
@@ -70,6 +71,17 @@ const DashSidebar: React.FC = () => {
                 as="span"
               >
                 Users
+              </Sidebar.Item>
+            </Link>
+          )}
+          {currentUser?.isAdmin && (
+            <Link to="/dashboard?tab=comments">
+              <Sidebar.Item
+                icon={BiSolidCommentDetail}
+                active={tab === "comments"}
+                as="span"
+              >
+                Comments
               </Sidebar.Item>
             </Link>
           )}

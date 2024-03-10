@@ -5,6 +5,7 @@ import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
 import DashPosts from "../components/DashPosts";
 import DashUsers from "../components/DashUsers";
+import DashComments from "../components/DashComments";
 
 const DashboardPage: React.FC = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const DashboardPage: React.FC = () => {
       setTab(tabFromUrl);
     }
   }, [location.search]);
+
   return (
     <MainLayout>
       <div className="min-h-screen flex flex-col sm:flex-row">
@@ -30,6 +32,8 @@ const DashboardPage: React.FC = () => {
         {tab === "posts" && <DashPosts />}
         {/* users */}
         {tab === "users" && <DashUsers />}
+        {/* comments */}
+        {tab === "comments" && <DashComments />}
       </div>
     </MainLayout>
   );
