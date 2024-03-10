@@ -12,9 +12,11 @@ import {
 } from "../api/commentApi";
 import { CommentData } from "../types/commentType";
 import Comment from "./Comment";
-import { postComments } from "../api/postApi";
+import { postComments, postIndex } from "../api/postApi";
 import axios, { AxiosError } from "axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { PostData, PostsResponse } from "../types/postType";
+import PostCard from "./PostCard";
 
 interface Props {
   postId: string;
@@ -29,6 +31,7 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
   const [comments, setComments] = useState<CommentData[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+  const [recentPosts, setRecentPosts] = useState<PostData[] | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +47,21 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
     };
     fetchData();
   }, [postId]);
+
+  useEffect(() => {
+    const fetchRecentPosts = async () => {
+      try {
+        const res: PostsResponse = await postIndex({ limit: 3 });
+        setRecentPosts(res.posts);
+      } catch (error) {
+        const err = error as AxiosError | Error;
+        axios.isAxiosError(err)
+          ? console.error(err.response?.data?.message)
+          : console.error(err.message);
+      }
+    };
+    fetchRecentPosts();
+  }, []);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -217,6 +235,13 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
           onDelete={handleDelete}
         />
       ))}
+      <div className="my-5">
+        <h2 className="mt-5 text-2xl text-center">Recent Articles</h2>
+        <div className="flex flex-wrap gap-6 mt-5">
+          {recentPosts &&
+            recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+        </div>
+      </div>
       <Modal
         show={showModal}
         size="md"
