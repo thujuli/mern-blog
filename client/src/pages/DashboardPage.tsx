@@ -6,6 +6,7 @@ import DashProfile from "../components/DashProfile";
 import DashPosts from "../components/DashPosts";
 import DashUsers from "../components/DashUsers";
 import DashComments from "../components/DashComments";
+import DashComponent from "../components/DashComponent";
 
 const DashboardPage: React.FC = () => {
   const location = useLocation();
@@ -34,6 +35,8 @@ const DashboardPage: React.FC = () => {
         {tab === "users" && <DashUsers />}
         {/* comments */}
         {tab === "comments" && <DashComments />}
+        {/* comments */}
+        {tab === "dash" && <DashComponent />}
       </div>
     </MainLayout>
   );

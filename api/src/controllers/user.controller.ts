@@ -128,13 +128,13 @@ const userIndex = async (req: Request, res: Response, next: NextFunction) => {
 
     const totalUsers = await User.countDocuments();
     const now = new Date();
-    const oneMothAgo = new Date(
+    const oneMonthAgo = new Date(
       now.getFullYear(),
       now.getMonth() - 1,
       now.getDay()
     );
     const totalLastMonthUsers = await User.countDocuments({
-      createdAt: { $gte: oneMothAgo },
+      createdAt: { $gte: oneMonthAgo },
     });
 
     res.json({ users: usersWithoutPass, totalUsers, totalLastMonthUsers });
