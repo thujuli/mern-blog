@@ -142,7 +142,7 @@ const DashComponent: React.FC = () => {
       </div>
 
       <div className="flex flex-wrap gap-6 justify-center mt-5">
-        <div className="min-w-full md:min-w-80 md:max-w-96">
+        <div className="min-w-full md:min-w-80 md:max-w-96 p-3 shadow-md rounded-md dark:bg-gray-700">
           <div className="flex justify-between items-center mb-2">
             <p className="font-medium">Recent users</p>
             <Link to="/dashboard?tab=users">
@@ -151,7 +151,7 @@ const DashComponent: React.FC = () => {
               </Button>
             </Link>
           </div>
-          <Table hoverable className="rounded-xl shadow-md">
+          <Table hoverable>
             <Table.Head>
               <Table.HeadCell>User image</Table.HeadCell>
               <Table.HeadCell>username</Table.HeadCell>
@@ -177,7 +177,7 @@ const DashComponent: React.FC = () => {
             </Table.Body>
           </Table>
         </div>
-        <div className="min-w-full md:min-w-80">
+        <div className="min-w-full md:min-w-80 p-3 shadow-md rounded-md dark:bg-gray-700">
           <div className="flex justify-between items-center mb-2">
             <p className="font-medium">Recent comments</p>
             <Link to="/dashboard?tab=comments">
@@ -186,7 +186,7 @@ const DashComponent: React.FC = () => {
               </Button>
             </Link>
           </div>
-          <Table hoverable className="rounded-xl shadow-md">
+          <Table hoverable>
             <Table.Head>
               <Table.HeadCell>Comment content</Table.HeadCell>
               <Table.HeadCell>likes</Table.HeadCell>
@@ -208,7 +208,7 @@ const DashComponent: React.FC = () => {
             </Table.Body>
           </Table>
         </div>
-        <div className="min-w-full md:min-w-80">
+        <div className="min-w-full md:min-w-80 p-3 shadow-md rounded-md dark:bg-gray-700">
           <div className="flex justify-between items-center mb-2">
             <p className="font-medium">Recent Posts</p>
             <Link to="/dashboard?tab=posts">
@@ -217,7 +217,7 @@ const DashComponent: React.FC = () => {
               </Button>
             </Link>
           </div>
-          <Table hoverable className="rounded-xl shadow-md">
+          <Table hoverable>
             <Table.Head>
               <Table.HeadCell>Post image</Table.HeadCell>
               <Table.HeadCell>Post Title</Table.HeadCell>
