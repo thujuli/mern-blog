@@ -237,7 +237,7 @@ const CommentSection: React.FC<Props> = ({ postId }: Props) => {
       ))}
       <div className="my-5">
         <h2 className="mt-5 text-2xl text-center">Recent Articles</h2>
-        <div className="flex flex-wrap gap-6 mt-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           {recentPosts &&
             recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
         </div>

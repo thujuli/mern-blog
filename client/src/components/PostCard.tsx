@@ -9,7 +9,7 @@ interface Porps {
 
 const PostCard: React.FC<Porps> = ({ post }: Porps) => {
   return (
-    <div className="flex flex-col justify-between gap-2 w-full md:max-w-[310px] border border-teal-500 rounded-lg hover:border-transparent hover:ring hover:ring-teal-500 overflow-hidden ">
+    <div className="flex flex-col justify-between gap-2 w-full border border-teal-500 rounded-lg hover:border-transparent hover:ring hover:ring-teal-500 overflow-hidden ">
       <Link to={`/posts/${post.slug}`}>
         <img
           src={post.imageUrl}
