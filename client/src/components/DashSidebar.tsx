@@ -5,8 +5,9 @@ import {
   HiDocumentText,
   HiUser,
   HiUserGroup,
+  HiChat,
+  HiChartPie,
 } from "react-icons/hi";
-import { BiSolidCommentDetail } from "react-icons/bi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logoutDestroy } from "../api/authApi";
 import { logoutSuccess } from "../redux/slices/authSlice";
@@ -41,6 +42,17 @@ const DashSidebar: React.FC = () => {
     <Sidebar className="grow-0 w-full sm:w-64">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
+          {currentUser?.isAdmin && (
+            <Link to="/dashboard?tab=dash">
+              <Sidebar.Item
+                icon={HiChartPie}
+                active={tab === "dash" || !tab}
+                as="span"
+              >
+                Dashboard
+              </Sidebar.Item>
+            </Link>
+          )}
           <Link to="/dashboard?tab=profile">
             <Sidebar.Item
               icon={HiUser}
@@ -76,11 +88,7 @@ const DashSidebar: React.FC = () => {
           )}
           {currentUser?.isAdmin && (
             <Link to="/dashboard?tab=comments">
-              <Sidebar.Item
-                icon={BiSolidCommentDetail}
-                active={tab === "comments"}
-                as="span"
-              >
+              <Sidebar.Item icon={HiChat} active={tab === "comments"} as="span">
                 Comments
               </Sidebar.Item>
             </Link>

@@ -85,16 +85,16 @@ const postIndex = async (req: Request, res: Response, next: NextFunction) => {
     const totalPosts = await Post.countDocuments();
 
     const now = new Date();
-    const oneMothAgo = new Date(
+    const oneMonthAgo = new Date(
       now.getFullYear(),
       now.getMonth() - 1,
       now.getDate()
     );
-    const totalLastMothPosts = await Post.countDocuments({
-      createdAt: { $gte: oneMothAgo },
+    const totalLastMonthPosts = await Post.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
     });
 
-    res.json({ posts, totalPosts, totalLastMothPosts });
+    res.json({ posts, totalPosts, totalLastMonthPosts });
   } catch (error) {
     if (error instanceof Error) {
       console.error("Post index error:", error.message);
